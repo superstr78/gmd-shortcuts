@@ -18,7 +18,7 @@ function renderShortcuts() {
 
         shortcuts.forEach(shortcut => {
             const cardEl = document.createElement('a');
-            cardEl.className = 'shortcut-card';
+            cardEl.className = shortcut.important ? 'shortcut-card important' : 'shortcut-card';
             cardEl.href = shortcut.url;
             cardEl.target = '_blank';
             cardEl.rel = 'noopener noreferrer';

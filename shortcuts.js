@@ -4,13 +4,15 @@ const shortcutsData = {
             name: "제품 정책 및 배포 전략",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/nj9Tfeun93mA/overview",
             icon: "📋",
-            description: "제품 출시 정책, 버전 관리 및 배포 일정"
+            description: "제품 출시 정책, 버전 관리 및 배포 일정",
+            important: true
         },
         {
             name: "다국어 요청",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/overview",
             icon: "🌐",
-            description: "번역 요청 및 다국어 리소스 관리"
+            description: "번역 요청 및 다국어 리소스 관리",
+            important: true
         },
         {
             name: "제품 규격",
@@ -92,7 +94,8 @@ const shortcutsData = {
             name: "개발자 네트워크",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/overview",
             icon: "🔗",
-            description: "기술 공유 및 개발자 커뮤니티"
+            description: "기술 공유 및 개발자 커뮤니티",
+            important: true
         },
         {
             name: "용어",
@@ -120,7 +123,8 @@ const shortcutsData = {
             name: "허브스팟",
             url: "https://app-na2.hubspot.com/",
             icon: "🔶",
-            description: "CRM 및 마케팅 자동화 플랫폼"
+            description: "CRM 및 마케팅 자동화 플랫폼",
+            important: true
         },
         {
             name: "가상머신1",

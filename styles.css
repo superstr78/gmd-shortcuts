@@ -130,6 +130,35 @@ main {
     line-height: 1.4;
 }
 
+/* Important Shortcut Card */
+.shortcut-card.important {
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.08) 0%, rgba(88, 166, 255, 0.02) 100%);
+    border-color: rgba(88, 166, 255, 0.3);
+    padding: 18px 20px;
+}
+
+.shortcut-card.important .shortcut-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    background-color: rgba(88, 166, 255, 0.15);
+}
+
+.shortcut-card.important .shortcut-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.shortcut-card.important .shortcut-desc {
+    font-size: 13px;
+}
+
+.shortcut-card.important:hover {
+    border-color: var(--accent-blue);
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.12) 0%, rgba(88, 166, 255, 0.04) 100%);
+}
+
 /* Updates Section */
 .updates-section {
     display: flex;
