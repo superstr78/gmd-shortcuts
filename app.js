@@ -17,21 +17,45 @@ function renderShortcuts() {
         gridEl.className = 'shortcuts-grid';
 
         shortcuts.forEach(shortcut => {
-            const cardEl = document.createElement('a');
-            cardEl.className = shortcut.important ? 'shortcut-card important' : 'shortcut-card';
-            cardEl.href = shortcut.url;
-            cardEl.target = '_blank';
-            cardEl.rel = 'noopener noreferrer';
+            if (shortcut.children && shortcut.children.length > 0) {
+                const cardEl = document.createElement('div');
+                cardEl.className = shortcut.important ? 'shortcut-card important has-children' : 'shortcut-card has-children';
 
-            cardEl.innerHTML = `
-                <div class="shortcut-icon">${shortcut.icon}</div>
-                <div class="shortcut-info">
-                    <div class="shortcut-name">${shortcut.name}</div>
-                    ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
-                </div>
-            `;
+                const childrenHtml = shortcut.children.map(child =>
+                    `<a href="${child.url}" target="_blank" rel="noopener noreferrer" class="child-link">${child.name}</a>`
+                ).join('');
 
-            gridEl.appendChild(cardEl);
+                cardEl.innerHTML = `
+                    <a href="${shortcut.url}" target="_blank" rel="noopener noreferrer" class="shortcut-main">
+                        <div class="shortcut-icon">${shortcut.icon}</div>
+                        <div class="shortcut-info">
+                            <div class="shortcut-name">${shortcut.name}</div>
+                            ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
+                        </div>
+                    </a>
+                    <div class="shortcut-children">
+                        ${childrenHtml}
+                    </div>
+                `;
+
+                gridEl.appendChild(cardEl);
+            } else {
+                const cardEl = document.createElement('a');
+                cardEl.className = shortcut.important ? 'shortcut-card important' : 'shortcut-card';
+                cardEl.href = shortcut.url;
+                cardEl.target = '_blank';
+                cardEl.rel = 'noopener noreferrer';
+
+                cardEl.innerHTML = `
+                    <div class="shortcut-icon">${shortcut.icon}</div>
+                    <div class="shortcut-info">
+                        <div class="shortcut-name">${shortcut.name}</div>
+                        ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
+                    </div>
+                `;
+
+                gridEl.appendChild(cardEl);
+            }
         });
 
         categoryEl.appendChild(headerEl);

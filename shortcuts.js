@@ -95,7 +95,12 @@ const shortcutsData = {
             url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/overview",
             icon: "🔗",
             description: "기술 공유 및 개발자 커뮤니티",
-            important: true
+            important: true,
+            children: [
+                { name: "코딩 규칙", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29004302" },
+                { name: "스크럼", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002639" },
+                { name: "지식 공유", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002207" }
+            ]
         },
         {
             name: "용어",
