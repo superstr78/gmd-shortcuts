@@ -69,9 +69,8 @@ main {
     gap: 10px;
     margin-bottom: 14px;
     padding: 10px 14px;
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-tertiary);
     border-radius: 8px;
-    border-left: 3px solid var(--accent-blue);
 }
 
 .category-header h2 {
