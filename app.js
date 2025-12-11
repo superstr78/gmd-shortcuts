@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderSidebarSection('팀 공간', 'team-spaces');
 });
 
+// 카테고리별 헤더 색상
 const categoryColors = {
     "제품 개발": "color-orange",
     "프로젝트": "color-blue",
@@ -20,6 +21,8 @@ const sidebarCategories = ["사무 업무", "팀 공간"];
 // 설정 초기화 및 토글 이벤트
 function initSettings() {
     const toggle = document.getElementById('open-new-tab');
+    if (!toggle) return;
+
     const savedSetting = localStorage.getItem('openInNewTab');
 
     // 저장된 설정 불러오기 (기본값: true)
@@ -27,33 +30,33 @@ function initSettings() {
         toggle.checked = savedSetting === 'true';
     }
 
-    // 토글 변경 시 저장
+    // 토글 변경 시 저장 및 모든 링크 업데이트
     toggle.addEventListener('change', function() {
         localStorage.setItem('openInNewTab', this.checked);
         updateAllLinks();
     });
 }
 
-// 새 창 열기 설정 가져오기
-function getOpenInNewTab() {
+// 링크 타겟 속성 반환 (_blank 또는 _self)
+function getLinkTarget() {
     const toggle = document.getElementById('open-new-tab');
-    return toggle ? toggle.checked : true;
+    return (toggle && toggle.checked) ? '_blank' : '_self';
 }
 
 // 모든 링크의 target 속성 업데이트
 function updateAllLinks() {
-    const target = getOpenInNewTab() ? '_blank' : '_self';
-
-    // 모든 바로가기 링크 업데이트
-    document.querySelectorAll('.shortcut-card:not(.has-children), .child-link, .sidebar-card').forEach(link => {
+    const target = getLinkTarget();
+    document.querySelectorAll('a[href].shortcut-card, .child-link, .sidebar-card').forEach(link => {
         link.target = target;
     });
 }
 
+// Confluence 링크 여부 확인
 function isConfluenceLink(url) {
-    return url.includes('atlassian.net/wiki');
+    return url && url.includes('atlassian.net/wiki');
 }
 
+// Confluence 뱃지 HTML 반환
 function getServiceBadge(url) {
     if (isConfluenceLink(url)) {
         return '<img src="images/conf_icon.png" alt="Confluence" class="service-badge">';
@@ -61,12 +64,10 @@ function getServiceBadge(url) {
     return '';
 }
 
-function getLinkTarget() {
-    return getOpenInNewTab() ? '_blank' : '_self';
-}
-
+// 메인 바로가기 그리드 렌더링
 function renderShortcuts() {
     const container = document.getElementById('shortcuts-container');
+    if (!container) return;
 
     for (const [category, shortcuts] of Object.entries(shortcutsData)) {
         // 사이드바 카테고리는 메인에서 제외
@@ -149,11 +150,12 @@ function renderShortcuts() {
     }
 }
 
+// 사이드바 섹션 렌더링
 function renderSidebarSection(categoryName, containerId) {
     const container = document.getElementById(containerId);
     const items = shortcutsData[categoryName];
 
-    if (!items || !container) return;
+    if (!container || !items || !Array.isArray(items)) return;
 
     items.forEach(item => {
         const cardEl = document.createElement('a');
