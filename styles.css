@@ -69,7 +69,6 @@ main {
     gap: 10px;
     margin-bottom: 14px;
     padding: 10px 14px;
-    background: linear-gradient(135deg, rgba(88, 166, 255, 0.12) 0%, rgba(88, 166, 255, 0.05) 100%);
     border-radius: 8px;
 }
 
@@ -78,6 +77,31 @@ main {
     font-weight: 600;
     color: var(--text-primary);
     letter-spacing: 0.3px;
+}
+
+/* 카테고리별 색상 */
+.category-header.color-blue {
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.15) 0%, rgba(88, 166, 255, 0.05) 100%);
+}
+
+.category-header.color-purple {
+    background: linear-gradient(135deg, rgba(163, 113, 247, 0.15) 0%, rgba(163, 113, 247, 0.05) 100%);
+}
+
+.category-header.color-green {
+    background: linear-gradient(135deg, rgba(63, 185, 80, 0.15) 0%, rgba(63, 185, 80, 0.05) 100%);
+}
+
+.category-header.color-orange {
+    background: linear-gradient(135deg, rgba(210, 153, 34, 0.15) 0%, rgba(210, 153, 34, 0.05) 100%);
+}
+
+.category-header.color-pink {
+    background: linear-gradient(135deg, rgba(219, 97, 162, 0.15) 0%, rgba(219, 97, 162, 0.05) 100%);
+}
+
+.category-header.color-teal {
+    background: linear-gradient(135deg, rgba(56, 189, 186, 0.15) 0%, rgba(56, 189, 186, 0.05) 100%);
 }
 
 .shortcuts-grid {

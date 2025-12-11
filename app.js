@@ -2,6 +2,15 @@ document.addEventListener('DOMContentLoaded', function() {
     renderShortcuts();
 });
 
+const categoryColors = {
+    "제품 개발": "color-blue",
+    "팀 공간": "color-purple",
+    "일반 공간": "color-green",
+    "기타 공간": "color-orange",
+    "업무 보조": "color-pink",
+    "내부 서버": "color-teal"
+};
+
 function renderShortcuts() {
     const container = document.getElementById('shortcuts-container');
 
@@ -9,8 +18,9 @@ function renderShortcuts() {
         const categoryEl = document.createElement('div');
         categoryEl.className = 'category';
 
+        const colorClass = categoryColors[category] || 'color-blue';
         const headerEl = document.createElement('div');
-        headerEl.className = 'category-header';
+        headerEl.className = `category-header ${colorClass}`;
         headerEl.innerHTML = `<h2>${category}</h2>`;
 
         const gridEl = document.createElement('div');
