@@ -97,9 +97,9 @@ const shortcutsData = {
             description: "기술 공유 및 개발자 커뮤니티",
             important: true,
             children: [
-                { name: "코딩 규칙", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29004302" },
-                { name: "스크럼", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002639" },
-                { name: "지식 공유", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002207" }
+                { name: "코딩 규칙", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29004302", icon: "📝", description: "코드 작성 표준 및 컨벤션" },
+                { name: "스크럼", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002639", icon: "🔄", description: "애자일 스크럼 프로세스" },
+                { name: "지식 공유", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002207", icon: "💡", description: "기술 세미나 및 공유 자료" }
             ]
         },
         {

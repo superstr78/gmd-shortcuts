@@ -22,7 +22,13 @@ function renderShortcuts() {
                 cardEl.className = shortcut.important ? 'shortcut-card important has-children' : 'shortcut-card has-children';
 
                 const childrenHtml = shortcut.children.map(child =>
-                    `<a href="${child.url}" target="_blank" rel="noopener noreferrer" class="child-link">${child.name}</a>`
+                    `<a href="${child.url}" target="_blank" rel="noopener noreferrer" class="child-link">
+                        <div class="child-icon">${child.icon || '📄'}</div>
+                        <div class="child-info">
+                            <div class="child-name">${child.name}</div>
+                            ${child.description ? `<div class="child-desc">${child.description}</div>` : ''}
+                        </div>
+                    </a>`
                 ).join('');
 
                 cardEl.innerHTML = `
