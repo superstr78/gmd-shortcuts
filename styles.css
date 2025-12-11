@@ -60,24 +60,25 @@ main {
 }
 
 .category {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .category-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border-color);
+    gap: 10px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-blue);
 }
 
 .category-header h2 {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
 }
 
 .shortcuts-grid {
