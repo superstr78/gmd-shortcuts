@@ -147,10 +147,20 @@ main {
 }
 
 .shortcut-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 13px;
     font-weight: 500;
     margin-bottom: 2px;
     color: var(--text-primary);
+}
+
+.service-badge {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
 }
 
 .shortcut-desc {
@@ -259,6 +269,9 @@ main {
 }
 
 .child-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 13px;
     font-weight: 500;
     color: var(--text-primary);

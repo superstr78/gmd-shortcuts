@@ -11,6 +11,17 @@ const categoryColors = {
     "내부 서버": "color-purple"
 };
 
+function isConfluenceLink(url) {
+    return url.includes('atlassian.net/wiki');
+}
+
+function getServiceBadge(url) {
+    if (isConfluenceLink(url)) {
+        return '<img src="images/conf_icon.png" alt="Confluence" class="service-badge">';
+    }
+    return '';
+}
+
 function renderShortcuts() {
     const container = document.getElementById('shortcuts-container');
 
@@ -36,7 +47,7 @@ function renderShortcuts() {
                     `<a href="${child.url}" target="_blank" rel="noopener noreferrer" class="child-link">
                         <div class="child-icon">${child.icon || '📄'}</div>
                         <div class="child-info">
-                            <div class="child-name">${child.name}</div>
+                            <div class="child-name">${child.name}${getServiceBadge(child.url)}</div>
                             ${child.description ? `<div class="child-desc">${child.description}</div>` : ''}
                         </div>
                     </a>`
@@ -46,7 +57,7 @@ function renderShortcuts() {
                     <div class="shortcut-main">
                         <div class="shortcut-icon">${shortcut.icon}</div>
                         <div class="shortcut-info">
-                            <div class="shortcut-name">${shortcut.name}</div>
+                            <div class="shortcut-name">${shortcut.name}${getServiceBadge(shortcut.url)}</div>
                             ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
                         </div>
                     </div>
@@ -72,7 +83,7 @@ function renderShortcuts() {
                 cardEl.innerHTML = `
                     <div class="shortcut-icon">${shortcut.icon}</div>
                     <div class="shortcut-info">
-                        <div class="shortcut-name">${shortcut.name}</div>
+                        <div class="shortcut-name">${shortcut.name}${getServiceBadge(shortcut.url)}</div>
                         ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
                     </div>
                 `;
