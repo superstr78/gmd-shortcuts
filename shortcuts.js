@@ -33,6 +33,32 @@ const shortcutsData = {
             description: "UI 문구 작성 가이드라인"
         }
     ],
+    "일반 공간": [
+        {
+            name: "개발자 네트워크",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/overview",
+            icon: "🔗",
+            description: "기술 공유 및 개발자 커뮤니티",
+            important: true,
+            children: [
+                { name: "코딩 규칙", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29004302", icon: "📝", description: "코드 작성 표준 및 컨벤션" },
+                { name: "스크럼", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002639", icon: "🔄", description: "애자일 스크럼 프로세스" },
+                { name: "지식 공유", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002207", icon: "💡", description: "기술 세미나 및 공유 자료" }
+            ]
+        },
+        {
+            name: "용어",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/terms/overview",
+            icon: "📖",
+            description: "사내 표준 용어 사전"
+        },
+        {
+            name: "출장 보고서",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/Report/overview",
+            icon: "✈️",
+            description: "국내외 출장 결과 보고"
+        }
+    ],
     "팀 공간": [
         {
             name: "개발1팀",
@@ -87,32 +113,6 @@ const shortcutsData = {
             url: "https://gmdsoft.atlassian.net/wiki/spaces/Manager/overview",
             icon: "👔",
             description: "팀장 전용 리더십 자료"
-        }
-    ],
-    "일반 공간": [
-        {
-            name: "개발자 네트워크",
-            url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/overview",
-            icon: "🔗",
-            description: "기술 공유 및 개발자 커뮤니티",
-            important: true,
-            children: [
-                { name: "코딩 규칙", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29004302", icon: "📝", description: "코드 작성 표준 및 컨벤션" },
-                { name: "스크럼", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002639", icon: "🔄", description: "애자일 스크럼 프로세스" },
-                { name: "지식 공유", url: "https://gmdsoft.atlassian.net/wiki/spaces/HSDN/pages/29002207", icon: "💡", description: "기술 세미나 및 공유 자료" }
-            ]
-        },
-        {
-            name: "용어",
-            url: "https://gmdsoft.atlassian.net/wiki/spaces/terms/overview",
-            icon: "📖",
-            description: "사내 표준 용어 사전"
-        },
-        {
-            name: "출장 보고서",
-            url: "https://gmdsoft.atlassian.net/wiki/spaces/Report/overview",
-            icon: "✈️",
-            description: "국내외 출장 결과 보고"
         }
     ],
     "기타 공간": [
