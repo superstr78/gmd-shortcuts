@@ -33,6 +33,53 @@ const shortcutsData = {
             description: "UI 문구 작성 가이드라인"
         }
     ],
+    "프로젝트": [
+        {
+            name: "MD-RED4",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/MDRED4/overview",
+            icon: "🔴",
+            description: "MD-RED 4세대 프로젝트",
+            important: true,
+            children: [
+                { name: "로드맵", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435913/MD-RED4", icon: "🗺️", description: "MD-RED4 개발 로드맵" },
+                { name: "제품 규격", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29436026/MD-RED4", icon: "📐", description: "MD-RED4 제품 규격" },
+                { name: "MD-EXP4", url: "https://gmdsoft.atlassian.net/wiki/spaces/EXP4/overview", icon: "🧪", description: "MD-EXP 4세대" }
+            ]
+        },
+        {
+            name: "MD-RED3",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/MDRED/overview",
+            icon: "🟠",
+            description: "MD-RED 3세대 프로젝트",
+            important: true,
+            children: [
+                { name: "MD-EXP3", url: "https://gmdsoft.atlassian.net/wiki/spaces/REDEXP/overview", icon: "🧪", description: "MD-EXP 3세대" },
+                { name: "KMV", url: "https://gmdsoft.atlassian.net/wiki/spaces/KMV/overview", icon: "👁️", description: "KMV 뷰어" }
+            ]
+        },
+        {
+            name: "MD-LIVE",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/MDLIVE/overview",
+            icon: "🟢",
+            description: "MD-LIVE 프로젝트",
+            important: true,
+            children: [
+                { name: "로드맵", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435939/MD-LIVE3", icon: "🗺️", description: "MD-LIVE3 개발 로드맵" },
+                { name: "제품 규격", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435810/MD-LIVE3", icon: "📐", description: "MD-LIVE3 제품 규격" }
+            ]
+        },
+        {
+            name: "MD-MEDIA",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/MDRECOVERY/overview",
+            icon: "🟣",
+            description: "MD-MEDIA 프로젝트",
+            important: true,
+            children: [
+                { name: "로드맵", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435711/MD-VIDEO", icon: "🗺️", description: "MD-VIDEO 개발 로드맵" },
+                { name: "제품 규격", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages", icon: "📐", description: "MD-MEDIA 제품 규격" }
+            ]
+        }
+    ],
     "일반 공간": [
         {
             name: "개발자 네트워크",

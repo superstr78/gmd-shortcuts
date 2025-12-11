@@ -4,8 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 const categoryColors = {
     "제품 개발": "color-orange",
-    "팀 공간": "color-purple",
+    "프로젝트": "color-blue",
     "일반 공간": "color-green",
+    "팀 공간": "color-purple",
     "기타 공간": "color-teal",
     "업무 보조": "color-pink",
     "내부 서버": "color-purple"
