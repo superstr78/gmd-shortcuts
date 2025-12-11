@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    initSettings();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
@@ -16,6 +17,39 @@ const categoryColors = {
 // 사이드바에 표시할 카테고리 (메인 그리드에서 제외)
 const sidebarCategories = ["사무 업무", "팀 공간"];
 
+// 설정 초기화 및 토글 이벤트
+function initSettings() {
+    const toggle = document.getElementById('open-new-tab');
+    const savedSetting = localStorage.getItem('openInNewTab');
+
+    // 저장된 설정 불러오기 (기본값: true)
+    if (savedSetting !== null) {
+        toggle.checked = savedSetting === 'true';
+    }
+
+    // 토글 변경 시 저장
+    toggle.addEventListener('change', function() {
+        localStorage.setItem('openInNewTab', this.checked);
+        updateAllLinks();
+    });
+}
+
+// 새 창 열기 설정 가져오기
+function getOpenInNewTab() {
+    const toggle = document.getElementById('open-new-tab');
+    return toggle ? toggle.checked : true;
+}
+
+// 모든 링크의 target 속성 업데이트
+function updateAllLinks() {
+    const target = getOpenInNewTab() ? '_blank' : '_self';
+
+    // 모든 바로가기 링크 업데이트
+    document.querySelectorAll('.shortcut-card:not(.has-children), .child-link, .sidebar-card').forEach(link => {
+        link.target = target;
+    });
+}
+
 function isConfluenceLink(url) {
     return url.includes('atlassian.net/wiki');
 }
@@ -25,6 +59,10 @@ function getServiceBadge(url) {
         return '<img src="images/conf_icon.png" alt="Confluence" class="service-badge">';
     }
     return '';
+}
+
+function getLinkTarget() {
+    return getOpenInNewTab() ? '_blank' : '_self';
 }
 
 function renderShortcuts() {
@@ -52,7 +90,7 @@ function renderShortcuts() {
                 cardEl.dataset.parentUrl = shortcut.url;
 
                 const childrenHtml = shortcut.children.map(child =>
-                    `<a href="${child.url}" target="_blank" rel="noopener noreferrer" class="child-link">
+                    `<a href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer" class="child-link">
                         <div class="child-icon">${child.icon || '📄'}</div>
                         <div class="child-info">
                             <div class="child-name">${child.name}${getServiceBadge(child.url)}</div>
@@ -76,7 +114,12 @@ function renderShortcuts() {
 
                 cardEl.addEventListener('click', function(e) {
                     if (!e.target.closest('.child-link')) {
-                        window.open(shortcut.url, '_blank', 'noopener,noreferrer');
+                        const target = getLinkTarget();
+                        if (target === '_blank') {
+                            window.open(shortcut.url, '_blank', 'noopener,noreferrer');
+                        } else {
+                            window.location.href = shortcut.url;
+                        }
                     }
                 });
 
@@ -85,7 +128,7 @@ function renderShortcuts() {
                 const cardEl = document.createElement('a');
                 cardEl.className = shortcut.important ? 'shortcut-card important' : 'shortcut-card';
                 cardEl.href = shortcut.url;
-                cardEl.target = '_blank';
+                cardEl.target = getLinkTarget();
                 cardEl.rel = 'noopener noreferrer';
 
                 cardEl.innerHTML = `
@@ -116,7 +159,7 @@ function renderSidebarSection(categoryName, containerId) {
         const cardEl = document.createElement('a');
         cardEl.className = 'sidebar-card';
         cardEl.href = item.url;
-        cardEl.target = '_blank';
+        cardEl.target = getLinkTarget();
         cardEl.rel = 'noopener noreferrer';
 
         cardEl.innerHTML = `
