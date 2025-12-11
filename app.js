@@ -20,6 +20,7 @@ function renderShortcuts() {
             if (shortcut.children && shortcut.children.length > 0) {
                 const cardEl = document.createElement('div');
                 cardEl.className = shortcut.important ? 'shortcut-card important has-children' : 'shortcut-card has-children';
+                cardEl.dataset.parentUrl = shortcut.url;
 
                 const childrenHtml = shortcut.children.map(child =>
                     `<a href="${child.url}" target="_blank" rel="noopener noreferrer" class="child-link">
@@ -32,17 +33,23 @@ function renderShortcuts() {
                 ).join('');
 
                 cardEl.innerHTML = `
-                    <a href="${shortcut.url}" target="_blank" rel="noopener noreferrer" class="shortcut-main">
+                    <div class="shortcut-main">
                         <div class="shortcut-icon">${shortcut.icon}</div>
                         <div class="shortcut-info">
                             <div class="shortcut-name">${shortcut.name}</div>
                             ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
                         </div>
-                    </a>
+                    </div>
                     <div class="shortcut-children">
                         ${childrenHtml}
                     </div>
                 `;
+
+                cardEl.addEventListener('click', function(e) {
+                    if (!e.target.closest('.child-link')) {
+                        window.open(shortcut.url, '_blank', 'noopener,noreferrer');
+                    }
+                });
 
                 gridEl.appendChild(cardEl);
             } else {

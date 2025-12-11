@@ -164,26 +164,26 @@ main {
     grid-template-columns: 1fr 2fr;
     gap: 12px;
     align-items: start;
+    cursor: pointer;
 }
 
 .shortcut-card.has-children:hover {
     transform: none;
 }
 
+.shortcut-card.has-children:hover .shortcut-name {
+    color: var(--accent-blue);
+}
+
 .shortcut-main {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    text-decoration: none;
     color: var(--text-primary);
 }
 
 .shortcut-card.important .shortcut-main {
     gap: 12px;
-}
-
-.shortcut-main:hover .shortcut-name {
-    color: var(--accent-blue);
 }
 
 .shortcut-children {
