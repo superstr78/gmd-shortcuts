@@ -76,7 +76,7 @@ main {
 
 .shortcuts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 }
 
@@ -160,8 +160,10 @@ main {
 
 /* Card with Children */
 .shortcut-card.has-children {
-    flex-direction: column;
-    gap: 0;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 12px;
+    align-items: start;
 }
 
 .shortcut-card.has-children:hover {
@@ -174,7 +176,6 @@ main {
     gap: 10px;
     text-decoration: none;
     color: var(--text-primary);
-    padding-bottom: 10px;
 }
 
 .shortcut-card.important .shortcut-main {
@@ -186,28 +187,32 @@ main {
 }
 
 .shortcut-children {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color);
+    align-content: start;
 }
 
 .child-link {
-    display: inline-block;
-    padding: 4px 10px;
-    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-secondary);
     background-color: var(--bg-tertiary);
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
     text-decoration: none;
     transition: all 0.15s ease;
+    text-align: center;
 }
 
 .child-link:hover {
     color: var(--text-primary);
     background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
 }
 
 /* Updates Section */
@@ -328,6 +333,12 @@ main {
     }
 }
 
+@media (max-width: 900px) {
+    .shortcuts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 16px;
@@ -339,6 +350,16 @@ main {
 
     .shortcuts-grid {
         grid-template-columns: 1fr;
+    }
+
+    .shortcut-card.has-children {
+        grid-template-columns: 1fr;
+    }
+
+    .shortcut-children {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
     }
 
     .updates-section {
