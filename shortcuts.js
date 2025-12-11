@@ -106,6 +106,26 @@ const shortcutsData = {
             description: "국내외 출장 결과 보고"
         }
     ],
+    "사무 업무": [
+        {
+            name: "그룹웨어",
+            url: "https://login.office.hiworks.com/gmdsoft.com",
+            icon: "📧",
+            description: "하이웍스 오피스"
+        },
+        {
+            name: "ERP",
+            url: "https://gmd.ksystemace.com/",
+            icon: "📊",
+            description: "전사 자원 관리"
+        },
+        {
+            name: "메타페이",
+            url: "https://gmdsoft.gopay.co.kr/",
+            icon: "💳",
+            description: "급여 및 복리후생"
+        }
+    ],
     "팀 공간": [
         {
             name: "개발1팀",

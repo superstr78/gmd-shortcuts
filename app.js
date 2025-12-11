@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     renderShortcuts();
-    renderTeamSpaces();
+    renderSidebarSection('사무 업무', 'office-work');
+    renderSidebarSection('팀 공간', 'team-spaces');
 });
 
 const categoryColors = {
@@ -13,7 +14,7 @@ const categoryColors = {
 };
 
 // 사이드바에 표시할 카테고리 (메인 그리드에서 제외)
-const sidebarCategories = ["팀 공간"];
+const sidebarCategories = ["사무 업무", "팀 공간"];
 
 function isConfluenceLink(url) {
     return url.includes('atlassian.net/wiki');
@@ -105,24 +106,24 @@ function renderShortcuts() {
     }
 }
 
-function renderTeamSpaces() {
-    const container = document.getElementById('team-spaces');
-    const teamSpaces = shortcutsData["팀 공간"];
+function renderSidebarSection(categoryName, containerId) {
+    const container = document.getElementById(containerId);
+    const items = shortcutsData[categoryName];
 
-    if (!teamSpaces) return;
+    if (!items || !container) return;
 
-    teamSpaces.forEach(team => {
+    items.forEach(item => {
         const cardEl = document.createElement('a');
         cardEl.className = 'sidebar-card';
-        cardEl.href = team.url;
+        cardEl.href = item.url;
         cardEl.target = '_blank';
         cardEl.rel = 'noopener noreferrer';
 
         cardEl.innerHTML = `
-            <div class="sidebar-icon">${team.icon}</div>
+            <div class="sidebar-icon">${item.icon}</div>
             <div class="sidebar-info">
-                <div class="sidebar-name">${team.name}${getServiceBadge(team.url)}</div>
-                <div class="sidebar-desc">${team.description}</div>
+                <div class="sidebar-name">${item.name}${getServiceBadge(item.url)}</div>
+                <div class="sidebar-desc">${item.description}</div>
             </div>
         `;
 
