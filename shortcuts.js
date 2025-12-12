@@ -37,7 +37,7 @@ const shortcutsData = {
         {
             name: "MD-RED4",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/MDRED4/overview",
-            icon: "🔴",
+            icon: '<img src="images/RED.jpg" alt="MD-RED4">',
             description: "MD-RED 4세대 프로젝트",
             important: true,
             children: [
@@ -49,7 +49,7 @@ const shortcutsData = {
         {
             name: "MD-RED3",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/MDRED/overview",
-            icon: "🟠",
+            icon: '<img src="images/RED.jpg" alt="MD-RED3">',
             description: "MD-RED 3세대 프로젝트",
             important: true,
             children: [
@@ -60,7 +60,7 @@ const shortcutsData = {
         {
             name: "MD-LIVE",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/MDLIVE/overview",
-            icon: "🟢",
+            icon: '<img src="images/LIVE.jpg" alt="MD-LIVE">',
             description: "MD-LIVE 프로젝트",
             important: true,
             children: [
@@ -71,12 +71,24 @@ const shortcutsData = {
         {
             name: "MD-MEDIA",
             url: "https://gmdsoft.atlassian.net/wiki/spaces/MDRECOVERY/overview",
-            icon: "🟣",
+            icon: '<img src="images/VIDEO.jpg" alt="MD-MEDIA">',
             description: "MD-MEDIA 프로젝트",
             important: true,
             children: [
                 { name: "로드맵", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435711/MD-VIDEO", icon: "🗺️", description: "MD-VIDEO 개발 로드맵" },
                 { name: "제품 규격", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages", icon: "📐", description: "MD-MEDIA 제품 규격" }
+            ]
+        },
+        {
+            name: "MD-NEXT",
+            url: "https://gmdsoft.atlassian.net/wiki/spaces/MDEXTRACTORS/overview",
+            icon: '<img src="images/NEXT.jpg" alt="MD-NEXT">',
+            description: "MD-NEXT 프로젝트",
+            important: true,
+            children: [
+                { name: "로드맵", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435780/MD-NEXT", icon: "🗺️", description: "MD-NEXT 개발 로드맵" },
+                { name: "제품 규격", url: "https://gmdsoft.atlassian.net/wiki/spaces/Shared/pages/29435937/MD-NEXT", icon: "📐", description: "MD-NEXT 제품 규격" },
+                { name: "MD-X", url: "https://gmdsoft.atlassian.net/wiki/spaces/MDX/overview?homepageId=50496563", icon: "🔧", description: "MD-X 프로젝트" }
             ]
         }
     ],
