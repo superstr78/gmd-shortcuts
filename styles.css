@@ -172,7 +172,7 @@ main {
 
 .shortcuts-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
 }
 
@@ -440,6 +440,10 @@ main {
 
     .header-banner {
         height: 120px;
+    }
+
+    .shortcuts-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .sidebar-section {
