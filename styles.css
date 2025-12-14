@@ -146,6 +146,10 @@ body.compact-mode .sidebar-card {
     align-items: center;
 }
 
+body.compact-mode .shortcut-main {
+    align-items: center;
+}
+
 body.compact-mode .shortcut-card.important {
     padding: 10px 12px;
 }
