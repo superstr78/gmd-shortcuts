@@ -20,11 +20,14 @@ const sidebarCategories = ["사무 업무", "팀 공간"];
 
 // 설정 초기화 및 토글 이벤트
 function initSettings() {
-    // 새 창에서 열기 토글
+    // 새 창에서 열기 토글 (기본값: true)
     const newTabToggle = document.getElementById('open-new-tab');
     if (newTabToggle) {
         const savedNewTab = localStorage.getItem('openInNewTab');
-        if (savedNewTab !== null) {
+        // 저장된 값이 없으면 기본값 true 저장
+        if (savedNewTab === null) {
+            localStorage.setItem('openInNewTab', 'true');
+        } else {
             newTabToggle.checked = savedNewTab === 'true';
         }
         newTabToggle.addEventListener('change', function() {
@@ -33,13 +36,17 @@ function initSettings() {
         });
     }
 
-    // 간략하게 표시 토글
+    // 간략하게 표시 토글 (기본값: true)
     const compactToggle = document.getElementById('compact-mode');
     if (compactToggle) {
         const savedCompact = localStorage.getItem('compactMode');
-        if (savedCompact === 'true') {
-            compactToggle.checked = true;
+        // 저장된 값이 없으면 기본값 true 저장
+        if (savedCompact === null) {
+            localStorage.setItem('compactMode', 'true');
             document.body.classList.add('compact-mode');
+        } else {
+            compactToggle.checked = savedCompact === 'true';
+            document.body.classList.toggle('compact-mode', savedCompact === 'true');
         }
         compactToggle.addEventListener('change', function() {
             localStorage.setItem('compactMode', this.checked);
