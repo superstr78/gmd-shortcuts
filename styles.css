@@ -154,6 +154,10 @@ body.compact-mode .shortcut-card.important {
     padding: 10px 12px;
 }
 
+body.compact-mode .shortcut-card.important:not(.has-children) {
+    grid-column: span 2;
+}
+
 .category {
     margin-bottom: 28px;
 }
