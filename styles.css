@@ -135,18 +135,19 @@ body.compact-mode .sidebar-desc {
 
 body.compact-mode .shortcut-card {
     padding: 8px 10px;
+    align-items: center;
+}
+
+body.compact-mode .child-link {
+    align-items: center;
+}
+
+body.compact-mode .sidebar-card {
+    align-items: center;
 }
 
 body.compact-mode .shortcut-card.important {
     padding: 10px 12px;
-}
-
-body.compact-mode .child-link {
-    padding: 8px 10px;
-}
-
-body.compact-mode .sidebar-card {
-    padding: 8px 10px;
 }
 
 .category {
@@ -275,9 +276,9 @@ body.compact-mode .sidebar-card {
 }
 
 .shortcut-card.important .shortcut-icon {
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
     background-color: rgba(88, 166, 255, 0.15);
     overflow: hidden;
 }
