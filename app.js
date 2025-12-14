@@ -20,21 +20,32 @@ const sidebarCategories = ["사무 업무", "팀 공간"];
 
 // 설정 초기화 및 토글 이벤트
 function initSettings() {
-    const toggle = document.getElementById('open-new-tab');
-    if (!toggle) return;
-
-    const savedSetting = localStorage.getItem('openInNewTab');
-
-    // 저장된 설정 불러오기 (기본값: true)
-    if (savedSetting !== null) {
-        toggle.checked = savedSetting === 'true';
+    // 새 창에서 열기 토글
+    const newTabToggle = document.getElementById('open-new-tab');
+    if (newTabToggle) {
+        const savedNewTab = localStorage.getItem('openInNewTab');
+        if (savedNewTab !== null) {
+            newTabToggle.checked = savedNewTab === 'true';
+        }
+        newTabToggle.addEventListener('change', function() {
+            localStorage.setItem('openInNewTab', this.checked);
+            updateAllLinks();
+        });
     }
 
-    // 토글 변경 시 저장 및 모든 링크 업데이트
-    toggle.addEventListener('change', function() {
-        localStorage.setItem('openInNewTab', this.checked);
-        updateAllLinks();
-    });
+    // 간략하게 표시 토글
+    const compactToggle = document.getElementById('compact-mode');
+    if (compactToggle) {
+        const savedCompact = localStorage.getItem('compactMode');
+        if (savedCompact === 'true') {
+            compactToggle.checked = true;
+            document.body.classList.add('compact-mode');
+        }
+        compactToggle.addEventListener('change', function() {
+            localStorage.setItem('compactMode', this.checked);
+            document.body.classList.toggle('compact-mode', this.checked);
+        });
+    }
 }
 
 // 링크 타겟 속성 반환 (_blank 또는 _self)
