@@ -135,6 +135,13 @@ function renderShortcuts() {
         // 사이드바 카테고리는 메인에서 제외
         if (sidebarCategories.includes(category)) continue;
 
+        // 정렬: important 우선, 이름 오름차순
+        const sortedShortcuts = [...shortcuts].sort((a, b) => {
+            if (a.important && !b.important) return -1;
+            if (!a.important && b.important) return 1;
+            return a.name.localeCompare(b.name, 'ko');
+        });
+
         const categoryEl = document.createElement('div');
         categoryEl.className = 'category';
 
@@ -146,7 +153,7 @@ function renderShortcuts() {
         const gridEl = document.createElement('div');
         gridEl.className = 'shortcuts-grid';
 
-        shortcuts.forEach(shortcut => {
+        sortedShortcuts.forEach(shortcut => {
             if (shortcut.children && shortcut.children.length > 0) {
                 const cardEl = document.createElement('div');
                 cardEl.className = shortcut.important ? 'shortcut-card important has-children' : 'shortcut-card has-children';
