@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     initSettings();
+    initTooltip();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
@@ -82,9 +83,47 @@ function getServiceBadge(url) {
     return '';
 }
 
-// 툴팁 텍스트 생성
-function getTooltip(name, description) {
-    return description ? `${name}: ${description}` : name;
+// 커스텀 툴팁 초기화
+function initTooltip() {
+    const tooltip = document.getElementById('custom-tooltip');
+    const titleEl = tooltip.querySelector('.custom-tooltip-title');
+    const descEl = tooltip.querySelector('.custom-tooltip-desc');
+
+    document.addEventListener('mouseover', function(e) {
+        const target = e.target.closest('[data-tooltip-name]');
+        if (target) {
+            const name = target.dataset.tooltipName;
+            const desc = target.dataset.tooltipDesc || '';
+
+            titleEl.textContent = name;
+            descEl.textContent = desc;
+            descEl.style.display = desc ? 'block' : 'none';
+
+            tooltip.classList.add('visible');
+        }
+    });
+
+    document.addEventListener('mousemove', function(e) {
+        if (tooltip.classList.contains('visible')) {
+            const x = e.clientX + 12;
+            const y = e.clientY + 12;
+
+            // 화면 밖으로 나가지 않도록 조정
+            const rect = tooltip.getBoundingClientRect();
+            const maxX = window.innerWidth - rect.width - 10;
+            const maxY = window.innerHeight - rect.height - 10;
+
+            tooltip.style.left = Math.min(x, maxX) + 'px';
+            tooltip.style.top = Math.min(y, maxY) + 'px';
+        }
+    });
+
+    document.addEventListener('mouseout', function(e) {
+        const target = e.target.closest('[data-tooltip-name]');
+        if (target) {
+            tooltip.classList.remove('visible');
+        }
+    });
 }
 
 // 메인 바로가기 그리드 렌더링
@@ -114,7 +153,7 @@ function renderShortcuts() {
                 cardEl.dataset.parentUrl = shortcut.url;
 
                 const childrenHtml = shortcut.children.map(child =>
-                    `<a href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer" class="child-link" title="${getTooltip(child.name, child.description)}">
+                    `<a href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer" class="child-link" data-tooltip-name="${child.name}" data-tooltip-desc="${child.description || ''}">
                         <div class="child-icon">${child.icon || '📄'}</div>
                         <div class="child-info">
                             <div class="child-name">${child.name}${getServiceBadge(child.url)}</div>
@@ -123,7 +162,8 @@ function renderShortcuts() {
                     </a>`
                 ).join('');
 
-                cardEl.title = getTooltip(shortcut.name, shortcut.description);
+                cardEl.dataset.tooltipName = shortcut.name;
+                cardEl.dataset.tooltipDesc = shortcut.description || '';
                 cardEl.innerHTML = `
                     <div class="shortcut-main">
                         <div class="shortcut-icon">${shortcut.icon}</div>
@@ -155,7 +195,8 @@ function renderShortcuts() {
                 cardEl.href = shortcut.url;
                 cardEl.target = getLinkTarget();
                 cardEl.rel = 'noopener noreferrer';
-                cardEl.title = getTooltip(shortcut.name, shortcut.description);
+                cardEl.dataset.tooltipName = shortcut.name;
+                cardEl.dataset.tooltipDesc = shortcut.description || '';
 
                 cardEl.innerHTML = `
                     <div class="shortcut-icon">${shortcut.icon}</div>
@@ -188,7 +229,8 @@ function renderSidebarSection(categoryName, containerId) {
         cardEl.href = item.url;
         cardEl.target = getLinkTarget();
         cardEl.rel = 'noopener noreferrer';
-        cardEl.title = getTooltip(item.name, item.description);
+        cardEl.dataset.tooltipName = item.name;
+        cardEl.dataset.tooltipDesc = item.description || '';
 
         cardEl.innerHTML = `
             <div class="sidebar-icon">${item.icon}</div>
