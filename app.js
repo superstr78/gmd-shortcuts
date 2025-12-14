@@ -82,6 +82,11 @@ function getServiceBadge(url) {
     return '';
 }
 
+// 툴팁 텍스트 생성
+function getTooltip(name, description) {
+    return description ? `${name}: ${description}` : name;
+}
+
 // 메인 바로가기 그리드 렌더링
 function renderShortcuts() {
     const container = document.getElementById('shortcuts-container');
@@ -109,7 +114,7 @@ function renderShortcuts() {
                 cardEl.dataset.parentUrl = shortcut.url;
 
                 const childrenHtml = shortcut.children.map(child =>
-                    `<a href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer" class="child-link">
+                    `<a href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer" class="child-link" title="${getTooltip(child.name, child.description)}">
                         <div class="child-icon">${child.icon || '📄'}</div>
                         <div class="child-info">
                             <div class="child-name">${child.name}${getServiceBadge(child.url)}</div>
@@ -118,6 +123,7 @@ function renderShortcuts() {
                     </a>`
                 ).join('');
 
+                cardEl.title = getTooltip(shortcut.name, shortcut.description);
                 cardEl.innerHTML = `
                     <div class="shortcut-main">
                         <div class="shortcut-icon">${shortcut.icon}</div>
@@ -149,6 +155,7 @@ function renderShortcuts() {
                 cardEl.href = shortcut.url;
                 cardEl.target = getLinkTarget();
                 cardEl.rel = 'noopener noreferrer';
+                cardEl.title = getTooltip(shortcut.name, shortcut.description);
 
                 cardEl.innerHTML = `
                     <div class="shortcut-icon">${shortcut.icon}</div>
@@ -181,6 +188,7 @@ function renderSidebarSection(categoryName, containerId) {
         cardEl.href = item.url;
         cardEl.target = getLinkTarget();
         cardEl.rel = 'noopener noreferrer';
+        cardEl.title = getTooltip(item.name, item.description);
 
         cardEl.innerHTML = `
             <div class="sidebar-icon">${item.icon}</div>
