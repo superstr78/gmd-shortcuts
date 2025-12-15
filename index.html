@@ -13,16 +13,22 @@
             <section class="shortcuts-section">
                 <h1 class="visually-hidden">GMD 바로가기</h1>
                 <div class="settings-bar">
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="open-new-tab" checked>
-                        <span class="toggle-slider"></span>
-                        <span class="toggle-label">새 창에서 열기</span>
-                    </label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="compact-mode" checked>
-                        <span class="toggle-slider"></span>
-                        <span class="toggle-label">간략하게 표시</span>
-                    </label>
+                    <button class="edit-mode-btn" id="toggle-edit-mode">
+                        <span class="edit-mode-icon">✏️</span>
+                        <span>편집 모드</span>
+                    </button>
+                    <div class="settings-toggles">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="open-new-tab" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">새 창에서 열기</span>
+                        </label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="compact-mode" checked>
+                            <span class="toggle-slider"></span>
+                            <span class="toggle-label">간략하게 표시</span>
+                        </label>
+                    </div>
                 </div>
                 <div id="shortcuts-container"></div>
                 <div class="footer-banner">
@@ -46,10 +52,6 @@
                 </div>
 
                 <div class="sidebar-actions">
-                    <button class="settings-btn edit-toggle-btn" id="toggle-edit-mode">
-                        <span class="settings-icon">✏️</span>
-                        <span>편집 모드</span>
-                    </button>
                     <button class="settings-btn" id="open-settings">
                         <span class="settings-icon">⚙️</span>
                         <span>설정</span>
