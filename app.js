@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initSettings();
     initTooltip();
     initSettingsModal();
+    initHelpModal();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
@@ -228,6 +229,35 @@ function initSettingsModal() {
             });
         });
     }
+}
+
+// 도움말 모달 초기화
+function initHelpModal() {
+    const modal = document.getElementById('help-modal');
+    const openBtn = document.getElementById('open-help');
+    const closeBtn = document.getElementById('close-help');
+    const closeHelpBtn = document.getElementById('close-help-btn');
+
+    // 모달 열기
+    openBtn.addEventListener('click', function() {
+        modal.classList.add('visible');
+    });
+
+    // 모달 닫기
+    closeBtn.addEventListener('click', function() {
+        modal.classList.remove('visible');
+    });
+
+    closeHelpBtn.addEventListener('click', function() {
+        modal.classList.remove('visible');
+    });
+
+    // 오버레이 클릭 시 닫기
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('visible');
+        }
+    });
 }
 
 // 메인 바로가기 그리드 렌더링

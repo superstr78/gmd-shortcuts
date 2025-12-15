@@ -548,6 +548,66 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     font-size: 16px;
 }
 
+.sidebar-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+.sidebar-actions .settings-btn {
+    flex: 1;
+}
+
+/* Help Modal Content */
+.help-content {
+    text-align: left;
+}
+
+.help-section {
+    margin-bottom: 20px;
+}
+
+.help-section:last-child {
+    margin-bottom: 0;
+}
+
+.help-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.help-section p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.help-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.help-section li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.help-section li strong {
+    color: var(--text-primary);
+}
+
+.help-icon {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;
