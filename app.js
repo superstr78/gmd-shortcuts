@@ -489,15 +489,21 @@ function renderSidebarSection(categoryName, containerId) {
     if (!container || !items || !Array.isArray(items)) return;
 
     items.forEach(item => {
-        const cardEl = document.createElement('a');
+        const cardEl = document.createElement(isEditMode ? 'div' : 'a');
         cardEl.className = 'sidebar-card';
-        cardEl.href = item.url;
-        cardEl.target = getLinkTarget();
-        cardEl.rel = 'noopener noreferrer';
+        if (!isEditMode) {
+            cardEl.href = item.url;
+            cardEl.target = getLinkTarget();
+            cardEl.rel = 'noopener noreferrer';
+        }
         cardEl.dataset.tooltipName = item.name;
         cardEl.dataset.tooltipDesc = item.description || '';
 
+        // 편집 버튼 HTML
+        const editBtnHtml = isEditMode ? `<button class="sidebar-edit-btn" data-category="${categoryName}" data-name="${item.name}">✏️</button>` : '';
+
         cardEl.innerHTML = `
+            ${editBtnHtml}
             <div class="sidebar-icon">${item.icon}</div>
             <div class="sidebar-info">
                 <div class="sidebar-name">${item.name}${getServiceBadge(item.url)}</div>
@@ -505,8 +511,33 @@ function renderSidebarSection(categoryName, containerId) {
             </div>
         `;
 
+        // 편집 버튼 이벤트
+        const editBtn = cardEl.querySelector('.sidebar-edit-btn');
+        if (editBtn) {
+            editBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openEditModal(categoryName, item);
+            });
+        }
+
         container.appendChild(cardEl);
     });
+
+    // 편집 모드에서 "추가" 버튼 표시
+    if (isEditMode) {
+        const addBtn = document.createElement('button');
+        addBtn.className = 'sidebar-card sidebar-add-btn';
+        addBtn.innerHTML = `
+            <div class="sidebar-icon add-icon">➕</div>
+            <div class="sidebar-info">
+                <div class="sidebar-name">바로가기 추가</div>
+            </div>
+        `;
+        addBtn.addEventListener('click', function() {
+            openEditModal(categoryName, null);
+        });
+        container.appendChild(addBtn);
+    }
 }
 
 // ==================== 로컬 데이터 관리 ====================

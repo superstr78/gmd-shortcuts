@@ -536,10 +536,62 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     text-decoration: none;
     color: var(--text-primary);
     transition: background-color 0.15s ease;
+    position: relative;
 }
 
 .sidebar-card:hover {
     background-color: var(--bg-tertiary);
+}
+
+/* Sidebar Edit Button */
+.sidebar-edit-btn {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    z-index: 10;
+}
+
+.sidebar-edit-btn:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+/* Sidebar Add Button */
+.sidebar-add-btn {
+    border: 1px dashed var(--border-color);
+    background-color: transparent;
+    cursor: pointer;
+    justify-content: flex-start;
+}
+
+.sidebar-add-btn:hover {
+    border-color: var(--accent-blue);
+    background-color: var(--bg-tertiary);
+}
+
+.sidebar-add-btn .add-icon {
+    background-color: transparent;
+}
+
+.sidebar-add-btn .sidebar-name {
+    color: var(--text-muted);
+}
+
+.sidebar-add-btn:hover .sidebar-name {
+    color: var(--accent-blue);
 }
 
 .sidebar-icon {
