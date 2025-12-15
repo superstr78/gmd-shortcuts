@@ -1,8 +1,8 @@
 # GMD Shortcuts 프로젝트 지침
 
-## 배포
+## 중요: 변경 후 반드시 커밋 & 푸시
 
-코드 변경 후 GitHub Pages에 배포하려면 반드시 수동으로 커밋하고 푸시해야 합니다.
+**모든 코드 변경 작업 완료 후 반드시 git 커밋하고 푸시해야 합니다.** 푸시하지 않으면 GitHub Pages에 반영되지 않습니다.
 
 ```bash
 cd "D:\AI 자동화\GMD 바로가기\gmd-shortcuts"
@@ -11,7 +11,7 @@ git commit -m "커밋 메시지"
 git push
 ```
 
-푸시하면 GitHub Actions 워크플로우가 자동으로 실행되어 GitHub Pages에 배포됩니다.
+푸시하면 GitHub Actions 워크플로우가 자동으로 실행되어 GitHub Pages에 배포됩니다. (1-2분 소요)
 
 ## 배포 URL
 
