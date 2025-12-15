@@ -604,6 +604,12 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     vertical-align: middle;
 }
 
+.changelog li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;
