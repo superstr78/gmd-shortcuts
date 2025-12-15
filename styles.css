@@ -550,12 +550,8 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
 
 .sidebar-actions {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 8px;
-}
-
-.sidebar-actions .settings-btn {
-    flex: 1;
 }
 
 /* Help Modal Content */
