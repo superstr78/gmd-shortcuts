@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     initSettings();
     initTooltip();
+    initSettingsModal();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
@@ -18,6 +19,9 @@ const categoryColors = {
 
 // 사이드바에 표시할 카테고리 (메인 그리드에서 제외)
 const sidebarCategories = ["사무 업무", "팀 공간"];
+
+// 기본 카테고리 순서
+const defaultCategoryOrder = ["제품 개발", "프로젝트", "일반 공간", "기타 공간", "업무 보조", "내부 서버"];
 
 // 설정 초기화 및 토글 이벤트
 function initSettings() {
@@ -135,14 +139,109 @@ function saveCollapsedState() {
     localStorage.setItem('collapsedCategories', JSON.stringify(collapsed));
 }
 
+// 카테고리 순서 가져오기
+function getCategoryOrder() {
+    const saved = localStorage.getItem('categoryOrder');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    return defaultCategoryOrder;
+}
+
+// 설정 모달 초기화
+function initSettingsModal() {
+    const modal = document.getElementById('settings-modal');
+    const openBtn = document.getElementById('open-settings');
+    const closeBtn = document.getElementById('close-settings');
+    const resetBtn = document.getElementById('reset-order');
+    const saveBtn = document.getElementById('save-order');
+    const orderList = document.getElementById('category-order-list');
+
+    let tempOrder = [];
+
+    // 모달 열기
+    openBtn.addEventListener('click', function() {
+        tempOrder = [...getCategoryOrder()];
+        renderOrderList();
+        modal.classList.add('visible');
+    });
+
+    // 모달 닫기
+    closeBtn.addEventListener('click', function() {
+        modal.classList.remove('visible');
+    });
+
+    // 오버레이 클릭 시 닫기
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('visible');
+        }
+    });
+
+    // 초기화 버튼
+    resetBtn.addEventListener('click', function() {
+        tempOrder = [...defaultCategoryOrder];
+        renderOrderList();
+    });
+
+    // 저장 버튼
+    saveBtn.addEventListener('click', function() {
+        localStorage.setItem('categoryOrder', JSON.stringify(tempOrder));
+        modal.classList.remove('visible');
+        // 페이지 새로고침하여 순서 적용
+        location.reload();
+    });
+
+    // 순서 목록 렌더링
+    function renderOrderList() {
+        orderList.innerHTML = tempOrder.map((category, index) => `
+            <div class="category-order-item" data-index="${index}">
+                <span class="drag-handle">☰</span>
+                <span class="category-name">${category}</span>
+                <div class="order-buttons">
+                    <button class="order-btn move-up" ${index === 0 ? 'disabled' : ''}>↑</button>
+                    <button class="order-btn move-down" ${index === tempOrder.length - 1 ? 'disabled' : ''}>↓</button>
+                </div>
+            </div>
+        `).join('');
+
+        // 버튼 이벤트 바인딩
+        orderList.querySelectorAll('.move-up').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.category-order-item');
+                const index = parseInt(item.dataset.index);
+                if (index > 0) {
+                    [tempOrder[index], tempOrder[index - 1]] = [tempOrder[index - 1], tempOrder[index]];
+                    renderOrderList();
+                }
+            });
+        });
+
+        orderList.querySelectorAll('.move-down').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const item = this.closest('.category-order-item');
+                const index = parseInt(item.dataset.index);
+                if (index < tempOrder.length - 1) {
+                    [tempOrder[index], tempOrder[index + 1]] = [tempOrder[index + 1], tempOrder[index]];
+                    renderOrderList();
+                }
+            });
+        });
+    }
+}
+
 // 메인 바로가기 그리드 렌더링
 function renderShortcuts() {
     const container = document.getElementById('shortcuts-container');
     if (!container) return;
 
-    for (const [category, shortcuts] of Object.entries(shortcutsData)) {
-        // 사이드바 카테고리는 메인에서 제외
-        if (sidebarCategories.includes(category)) continue;
+    // 저장된 순서대로 카테고리 렌더링
+    const categoryOrder = getCategoryOrder();
+
+    for (const category of categoryOrder) {
+        const shortcuts = shortcutsData[category];
+        // 사이드바 카테고리나 존재하지 않는 카테고리는 제외
+        if (!shortcuts || sidebarCategories.includes(category)) continue;
 
         // 정렬: important 우선, 이름 오름차순
         const sortedShortcuts = [...shortcuts].sort((a, b) => {
