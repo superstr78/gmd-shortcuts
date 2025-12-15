@@ -604,10 +604,16 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     vertical-align: middle;
 }
 
+.changelog {
+    padding-left: 20px;
+}
+
 .changelog li {
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
+    list-style: disc;
+    display: list-item;
 }
 
 /* Modal */
