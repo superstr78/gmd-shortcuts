@@ -269,6 +269,7 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     text-decoration: none;
     color: var(--text-primary);
     transition: all 0.15s ease;
+    position: relative;
 }
 
 .shortcut-card:hover {
@@ -791,6 +792,137 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
 
 .btn-primary:hover {
     background-color: #4a9aef;
+}
+
+.btn-danger {
+    background-color: #da3633;
+    border: 1px solid #da3633;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #bd2c29;
+}
+
+/* Edit Mode Styles */
+.edit-toggle-btn.active {
+    background-color: rgba(88, 166, 255, 0.15);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.edit-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    z-index: 10;
+}
+
+.edit-btn:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+/* Add Shortcut Button */
+.add-shortcut-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 80px;
+    background-color: transparent;
+    border: 2px dashed var(--border-color);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.add-shortcut-btn:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--accent-blue);
+}
+
+.add-icon {
+    font-size: 24px;
+    color: var(--text-muted);
+}
+
+.add-text {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.add-shortcut-btn:hover .add-icon,
+.add-shortcut-btn:hover .add-text {
+    color: var(--accent-blue);
+}
+
+/* Edit Form Styles */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"] {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: border-color 0.15s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="url"]:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-blue);
+    cursor: pointer;
+}
+
+/* Reset Warning */
+.reset-warning {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
 }
 
 /* Responsive */

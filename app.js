@@ -4,10 +4,16 @@ document.addEventListener('DOMContentLoaded', function() {
     initSettingsModal();
     initHelpModal();
     initChangelogModal();
+    initEditMode();
+    initEditModal();
+    initResetModal();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
 });
+
+// 편집 모드 상태
+let isEditMode = false;
 
 // 카테고리별 헤더 색상
 const categoryColors = {
@@ -157,6 +163,7 @@ function initSettingsModal() {
     const closeBtn = document.getElementById('close-settings');
     const resetBtn = document.getElementById('reset-order');
     const saveBtn = document.getElementById('save-order');
+    const resetDataBtn = document.getElementById('open-reset-data');
     const orderList = document.getElementById('category-order-list');
 
     let tempOrder = [];
@@ -167,6 +174,14 @@ function initSettingsModal() {
         renderOrderList();
         modal.classList.add('visible');
     });
+
+    // 데이터 초기화 버튼 클릭
+    if (resetDataBtn) {
+        resetDataBtn.addEventListener('click', function() {
+            modal.classList.remove('visible');
+            openResetModal();
+        });
+    }
 
     // 모달 닫기
     closeBtn.addEventListener('click', function() {
@@ -299,9 +314,10 @@ function renderShortcuts() {
     const categoryOrder = getCategoryOrder();
 
     for (const category of categoryOrder) {
-        const shortcuts = shortcutsData[category];
+        // 로컬 데이터와 병합된 데이터 사용
+        const shortcuts = getMergedShortcuts(category);
         // 사이드바 카테고리나 존재하지 않는 카테고리는 제외
-        if (!shortcuts || sidebarCategories.includes(category)) continue;
+        if (!shortcuts || shortcuts.length === 0 || sidebarCategories.includes(category)) continue;
 
         // 정렬: important 우선, 이름 오름차순
         const sortedShortcuts = [...shortcuts].sort((a, b) => {
@@ -350,9 +366,13 @@ function renderShortcuts() {
                     </a>`
                 ).join('');
 
+                // 편집 버튼 HTML
+                const editBtnHtml = isEditMode ? `<button class="edit-btn" data-category="${category}" data-name="${shortcut.name}">✏️</button>` : '';
+
                 cardEl.dataset.tooltipName = shortcut.name;
                 cardEl.dataset.tooltipDesc = shortcut.description || '';
                 cardEl.innerHTML = `
+                    ${editBtnHtml}
                     <div class="shortcut-main">
                         <div class="shortcut-icon">${shortcut.icon}</div>
                         <div class="shortcut-info">
@@ -365,8 +385,18 @@ function renderShortcuts() {
                     </div>
                 `;
 
+                // 편집 버튼 이벤트
+                const editBtn = cardEl.querySelector('.edit-btn');
+                if (editBtn) {
+                    editBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openEditModal(category, shortcut);
+                    });
+                }
+
                 cardEl.addEventListener('click', function(e) {
-                    if (!e.target.closest('.child-link')) {
+                    if (!e.target.closest('.child-link') && !e.target.closest('.edit-btn')) {
+                        if (isEditMode) return; // 편집 모드에서는 링크 이동 안함
                         const target = getLinkTarget();
                         if (target === '_blank') {
                             window.open(shortcut.url, '_blank', 'noopener,noreferrer');
@@ -378,15 +408,21 @@ function renderShortcuts() {
 
                 gridEl.appendChild(cardEl);
             } else {
-                const cardEl = document.createElement('a');
+                const cardEl = document.createElement(isEditMode ? 'div' : 'a');
                 cardEl.className = shortcut.important ? 'shortcut-card important' : 'shortcut-card';
-                cardEl.href = shortcut.url;
-                cardEl.target = getLinkTarget();
-                cardEl.rel = 'noopener noreferrer';
+                if (!isEditMode) {
+                    cardEl.href = shortcut.url;
+                    cardEl.target = getLinkTarget();
+                    cardEl.rel = 'noopener noreferrer';
+                }
                 cardEl.dataset.tooltipName = shortcut.name;
                 cardEl.dataset.tooltipDesc = shortcut.description || '';
 
+                // 편집 버튼 HTML
+                const editBtnHtml = isEditMode ? `<button class="edit-btn" data-category="${category}" data-name="${shortcut.name}">✏️</button>` : '';
+
                 cardEl.innerHTML = `
+                    ${editBtnHtml}
                     <div class="shortcut-icon">${shortcut.icon}</div>
                     <div class="shortcut-info">
                         <div class="shortcut-name">${shortcut.name}${getServiceBadge(shortcut.url)}</div>
@@ -394,9 +430,32 @@ function renderShortcuts() {
                     </div>
                 `;
 
+                // 편집 버튼 이벤트
+                const editBtn = cardEl.querySelector('.edit-btn');
+                if (editBtn) {
+                    editBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openEditModal(category, shortcut);
+                    });
+                }
+
                 gridEl.appendChild(cardEl);
             }
         });
+
+        // 편집 모드에서 "추가" 버튼 표시
+        if (isEditMode) {
+            const addBtn = document.createElement('button');
+            addBtn.className = 'shortcut-card add-shortcut-btn';
+            addBtn.innerHTML = `
+                <div class="add-icon">➕</div>
+                <div class="add-text">바로가기 추가</div>
+            `;
+            addBtn.addEventListener('click', function() {
+                openEditModal(category, null);
+            });
+            gridEl.appendChild(addBtn);
+        }
 
         categoryEl.appendChild(headerEl);
         categoryEl.appendChild(gridEl);
@@ -407,7 +466,7 @@ function renderShortcuts() {
 // 사이드바 섹션 렌더링
 function renderSidebarSection(categoryName, containerId) {
     const container = document.getElementById(containerId);
-    const items = shortcutsData[categoryName];
+    const items = getMergedShortcuts(categoryName);
 
     if (!container || !items || !Array.isArray(items)) return;
 
@@ -430,4 +489,264 @@ function renderSidebarSection(categoryName, containerId) {
 
         container.appendChild(cardEl);
     });
+}
+
+// ==================== 로컬 데이터 관리 ====================
+
+// 로컬 저장소에서 사용자 편집 데이터 가져오기
+function getCustomShortcuts() {
+    const saved = localStorage.getItem('customShortcuts');
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            return {};
+        }
+    }
+    return {};
+}
+
+// 로컬 저장소에 사용자 편집 데이터 저장
+function saveCustomShortcuts(data) {
+    localStorage.setItem('customShortcuts', JSON.stringify(data));
+}
+
+// 기본 데이터와 사용자 편집 데이터 병합
+function getMergedShortcuts(category) {
+    const baseData = shortcutsData[category] || [];
+    const customData = getCustomShortcuts()[category] || {};
+    const modified = customData.modified || {};
+    const hidden = customData.hidden || [];
+    const added = customData.added || [];
+
+    // 기본 데이터에서 숨겨진 항목 제외하고 수정된 항목 적용
+    const mergedBase = baseData
+        .filter(item => !hidden.includes(item.name))
+        .map(item => {
+            if (modified[item.name]) {
+                return { ...item, ...modified[item.name] };
+            }
+            return item;
+        });
+
+    // 추가된 항목 병합
+    return [...mergedBase, ...added];
+}
+
+// 바로가기 수정
+function modifyShortcut(category, originalName, newData) {
+    const customData = getCustomShortcuts();
+    if (!customData[category]) {
+        customData[category] = { modified: {}, hidden: [], added: [] };
+    }
+
+    // 추가된 항목인지 확인
+    const addedIndex = customData[category].added.findIndex(item => item.name === originalName);
+    if (addedIndex !== -1) {
+        // 추가된 항목 수정
+        customData[category].added[addedIndex] = { ...customData[category].added[addedIndex], ...newData };
+    } else {
+        // 기본 데이터 수정
+        customData[category].modified[originalName] = newData;
+    }
+
+    saveCustomShortcuts(customData);
+}
+
+// 바로가기 추가
+function addShortcut(category, shortcutData) {
+    const customData = getCustomShortcuts();
+    if (!customData[category]) {
+        customData[category] = { modified: {}, hidden: [], added: [] };
+    }
+
+    customData[category].added.push(shortcutData);
+    saveCustomShortcuts(customData);
+}
+
+// 바로가기 삭제 (숨김 처리)
+function deleteShortcut(category, name) {
+    const customData = getCustomShortcuts();
+    if (!customData[category]) {
+        customData[category] = { modified: {}, hidden: [], added: [] };
+    }
+
+    // 추가된 항목인지 확인
+    const addedIndex = customData[category].added.findIndex(item => item.name === name);
+    if (addedIndex !== -1) {
+        // 추가된 항목은 완전히 삭제
+        customData[category].added.splice(addedIndex, 1);
+    } else {
+        // 기본 데이터는 숨김 처리
+        if (!customData[category].hidden.includes(name)) {
+            customData[category].hidden.push(name);
+        }
+        // 수정 데이터도 삭제
+        delete customData[category].modified[name];
+    }
+
+    saveCustomShortcuts(customData);
+}
+
+// 모든 사용자 편집 데이터 초기화
+function resetAllCustomData() {
+    localStorage.removeItem('customShortcuts');
+}
+
+// ==================== 편집 모드 ====================
+
+// 편집 모드 초기화
+function initEditMode() {
+    const toggleBtn = document.getElementById('toggle-edit-mode');
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', function() {
+        isEditMode = !isEditMode;
+        document.body.classList.toggle('edit-mode', isEditMode);
+        toggleBtn.classList.toggle('active', isEditMode);
+
+        // 편집 모드 전환 시 페이지 다시 렌더링
+        rerenderAll();
+    });
+}
+
+// 전체 다시 렌더링
+function rerenderAll() {
+    // 메인 컨테이너 비우기
+    const shortcutsContainer = document.getElementById('shortcuts-container');
+    if (shortcutsContainer) {
+        shortcutsContainer.innerHTML = '';
+    }
+
+    // 사이드바 비우기
+    const officeWork = document.getElementById('office-work');
+    const teamSpaces = document.getElementById('team-spaces');
+    if (officeWork) officeWork.innerHTML = '';
+    if (teamSpaces) teamSpaces.innerHTML = '';
+
+    // 다시 렌더링
+    renderShortcuts();
+    renderSidebarSection('사무 업무', 'office-work');
+    renderSidebarSection('팀 공간', 'team-spaces');
+}
+
+// ==================== 편집 모달 ====================
+
+function initEditModal() {
+    const modal = document.getElementById('edit-modal');
+    const closeBtn = document.getElementById('close-edit');
+    const cancelBtn = document.getElementById('cancel-edit');
+    const deleteBtn = document.getElementById('delete-shortcut');
+    const form = document.getElementById('edit-form');
+
+    if (!modal) return;
+
+    // 모달 닫기
+    const closeModal = () => modal.classList.remove('visible');
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // 삭제 버튼
+    deleteBtn.addEventListener('click', function() {
+        const category = document.getElementById('edit-category').value;
+        const originalName = document.getElementById('edit-original-name').value;
+        const isNew = document.getElementById('edit-is-new').value === 'true';
+
+        if (isNew) {
+            // 새로 추가 중인 항목은 그냥 닫기
+            closeModal();
+            return;
+        }
+
+        if (confirm('이 바로가기를 삭제하시겠습니까?')) {
+            deleteShortcut(category, originalName);
+            closeModal();
+            rerenderAll();
+        }
+    });
+
+    // 폼 제출
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const category = document.getElementById('edit-category').value;
+        const originalName = document.getElementById('edit-original-name').value;
+        const isNew = document.getElementById('edit-is-new').value === 'true';
+
+        const newData = {
+            name: document.getElementById('edit-name').value.trim(),
+            url: document.getElementById('edit-url').value.trim(),
+            icon: document.getElementById('edit-icon').value.trim() || '📄',
+            description: document.getElementById('edit-description').value.trim(),
+            important: document.getElementById('edit-important').checked
+        };
+
+        if (isNew) {
+            addShortcut(category, newData);
+        } else {
+            modifyShortcut(category, originalName, newData);
+        }
+
+        closeModal();
+        rerenderAll();
+    });
+}
+
+// 편집 모달 열기
+function openEditModal(category, shortcut = null) {
+    const modal = document.getElementById('edit-modal');
+    const title = document.getElementById('edit-modal-title');
+    const deleteBtn = document.getElementById('delete-shortcut');
+
+    const isNew = !shortcut;
+
+    document.getElementById('edit-category').value = category;
+    document.getElementById('edit-original-name').value = shortcut ? shortcut.name : '';
+    document.getElementById('edit-is-new').value = isNew ? 'true' : 'false';
+
+    document.getElementById('edit-name').value = shortcut ? shortcut.name : '';
+    document.getElementById('edit-url').value = shortcut ? shortcut.url : '';
+    document.getElementById('edit-icon').value = shortcut ? (shortcut.icon.startsWith('<img') ? '' : shortcut.icon) : '';
+    document.getElementById('edit-description').value = shortcut ? (shortcut.description || '') : '';
+    document.getElementById('edit-important').checked = shortcut ? shortcut.important : false;
+
+    title.textContent = isNew ? '➕ 바로가기 추가' : '✏️ 바로가기 편집';
+    deleteBtn.style.display = isNew ? 'none' : 'block';
+
+    modal.classList.add('visible');
+}
+
+// ==================== 초기화 모달 ====================
+
+function initResetModal() {
+    const modal = document.getElementById('reset-modal');
+    const closeBtn = document.getElementById('close-reset');
+    const cancelBtn = document.getElementById('cancel-reset');
+    const confirmBtn = document.getElementById('confirm-reset');
+
+    if (!modal) return;
+
+    const closeModal = () => modal.classList.remove('visible');
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    confirmBtn.addEventListener('click', function() {
+        resetAllCustomData();
+        closeModal();
+        rerenderAll();
+    });
+}
+
+// 초기화 모달 열기
+function openResetModal() {
+    const modal = document.getElementById('reset-modal');
+    if (modal) modal.classList.add('visible');
 }
