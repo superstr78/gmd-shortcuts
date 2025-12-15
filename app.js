@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTooltip();
     initSettingsModal();
     initHelpModal();
+    initChangelogModal();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
@@ -249,6 +250,35 @@ function initHelpModal() {
     });
 
     closeHelpBtn.addEventListener('click', function() {
+        modal.classList.remove('visible');
+    });
+
+    // 오버레이 클릭 시 닫기
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('visible');
+        }
+    });
+}
+
+// 변경 내역 모달 초기화
+function initChangelogModal() {
+    const modal = document.getElementById('changelog-modal');
+    const openBtn = document.getElementById('open-changelog');
+    const closeBtn = document.getElementById('close-changelog');
+    const closeChangelogBtn = document.getElementById('close-changelog-btn');
+
+    // 모달 열기
+    openBtn.addEventListener('click', function() {
+        modal.classList.add('visible');
+    });
+
+    // 모달 닫기
+    closeBtn.addEventListener('click', function() {
+        modal.classList.remove('visible');
+    });
+
+    closeChangelogBtn.addEventListener('click', function() {
         modal.classList.remove('visible');
     });
 

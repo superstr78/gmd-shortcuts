@@ -54,6 +54,10 @@
                         <span class="settings-icon">❓</span>
                         <span>도움말</span>
                     </button>
+                    <button class="settings-btn" id="open-changelog">
+                        <span class="settings-icon">📋</span>
+                        <span>변경 내역</span>
+                    </button>
                 </div>
             </aside>
         </main>
@@ -119,19 +123,31 @@
                         <li><img src="images/conf_icon.png" alt="Confluence" class="help-icon"> Confluence 문서 링크</li>
                     </ul>
                 </div>
-                <div class="help-section">
-                    <h3>📋 변경 내역</h3>
-                    <ul class="changelog">
-                        <li><strong>v1.0</strong> - 최초 릴리스: 바로가기 목록, 카테고리별 분류</li>
-                        <li><strong>v1.1</strong> - 새 창에서 열기/간략하게 표시 옵션 추가</li>
-                        <li><strong>v1.2</strong> - 커스텀 툴팁, 카테고리 접기/펼치기 기능</li>
-                        <li><strong>v1.3</strong> - 카테고리 순서 설정 기능</li>
-                        <li><strong>v1.4</strong> - 도움말 페이지, 변경 내역 추가</li>
-                    </ul>
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-primary" id="close-help-btn">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Changelog Modal -->
+    <div class="modal-overlay" id="changelog-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>📋 변경 내역</h2>
+                <button class="modal-close" id="close-changelog">✕</button>
+            </div>
+            <div class="modal-body help-content">
+                <ul class="changelog">
+                    <li><strong>v1.4</strong> - 도움말 페이지, 변경 내역 분리</li>
+                    <li><strong>v1.3</strong> - 카테고리 순서 설정 기능</li>
+                    <li><strong>v1.2</strong> - 커스텀 툴팁, 카테고리 접기/펼치기 기능</li>
+                    <li><strong>v1.1</strong> - 새 창에서 열기/간략하게 표시 옵션 추가</li>
+                    <li><strong>v1.0</strong> - 최초 릴리스: 바로가기 목록, 카테고리별 분류</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="close-changelog-btn">확인</button>
             </div>
         </div>
     </div>
