@@ -33,6 +33,24 @@ const defaultCategoryOrder = ["제품 개발", "프로젝트", "일반 공간", 
 
 // 설정 초기화 및 토글 이벤트
 function initSettings() {
+    // 다크 모드 토글 (기본값: true)
+    const darkModeToggle = document.getElementById('dark-mode');
+    if (darkModeToggle) {
+        const savedDarkMode = localStorage.getItem('darkMode');
+        // 저장된 값이 없으면 기본값 true (다크 모드)
+        if (savedDarkMode === null) {
+            localStorage.setItem('darkMode', 'true');
+        } else {
+            darkModeToggle.checked = savedDarkMode === 'true';
+            // 라이트 모드일 때 light-mode 클래스 추가
+            document.body.classList.toggle('light-mode', savedDarkMode !== 'true');
+        }
+        darkModeToggle.addEventListener('change', function() {
+            localStorage.setItem('darkMode', this.checked);
+            document.body.classList.toggle('light-mode', !this.checked);
+        });
+    }
+
     // 새 창에서 열기 토글 (기본값: true)
     const newTabToggle = document.getElementById('open-new-tab');
     if (newTabToggle) {
