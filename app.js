@@ -126,6 +126,15 @@ function initTooltip() {
     });
 }
 
+// 접힌 카테고리 상태 저장
+function saveCollapsedState() {
+    const collapsed = [];
+    document.querySelectorAll('.category.collapsed').forEach(el => {
+        collapsed.push(el.dataset.category);
+    });
+    localStorage.setItem('collapsedCategories', JSON.stringify(collapsed));
+}
+
 // 메인 바로가기 그리드 렌더링
 function renderShortcuts() {
     const container = document.getElementById('shortcuts-container');
@@ -144,11 +153,24 @@ function renderShortcuts() {
 
         const categoryEl = document.createElement('div');
         categoryEl.className = 'category';
+        categoryEl.dataset.category = category;
+
+        // 저장된 접힘 상태 복원
+        const collapsedCategories = JSON.parse(localStorage.getItem('collapsedCategories') || '[]');
+        if (collapsedCategories.includes(category)) {
+            categoryEl.classList.add('collapsed');
+        }
 
         const colorClass = categoryColors[category] || 'color-blue';
         const headerEl = document.createElement('div');
         headerEl.className = `category-header ${colorClass}`;
         headerEl.innerHTML = `<h2>${category}</h2>`;
+
+        // 헤더 클릭 시 접기/펼치기
+        headerEl.addEventListener('click', function() {
+            categoryEl.classList.toggle('collapsed');
+            saveCollapsedState();
+        });
 
         const gridEl = document.createElement('div');
         gridEl.className = 'shortcuts-grid';

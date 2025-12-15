@@ -201,6 +201,23 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     margin-bottom: 14px;
     padding: 10px 14px;
     border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.category-header::before {
+    content: '▼';
+    font-size: 10px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+
+.category.collapsed .category-header::before {
+    transform: rotate(-90deg);
+}
+
+.category.collapsed .shortcuts-grid {
+    display: none;
 }
 
 .category-header h2 {
