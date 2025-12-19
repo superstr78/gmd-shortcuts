@@ -197,6 +197,45 @@
         </div>
     </div>
 
+    <!-- Edit Child Shortcut Modal -->
+    <div class="modal-overlay" id="child-edit-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="child-edit-modal-title">✏️ 자식 바로가기 편집</h2>
+                <button class="modal-close" id="close-child-edit">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="child-edit-form">
+                    <input type="hidden" id="child-edit-category">
+                    <input type="hidden" id="child-edit-parent-name">
+                    <input type="hidden" id="child-edit-index">
+                    <input type="hidden" id="child-edit-is-new">
+                    <div class="form-group">
+                        <label for="child-edit-name">이름</label>
+                        <input type="text" id="child-edit-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="child-edit-url">URL</label>
+                        <input type="url" id="child-edit-url" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="child-edit-icon">아이콘 (이모지)</label>
+                        <input type="text" id="child-edit-icon" maxlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="child-edit-description">설명</label>
+                        <input type="text" id="child-edit-description">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="delete-child-shortcut" style="margin-right: auto;">삭제</button>
+                <button type="button" class="btn btn-secondary" id="cancel-child-edit">취소</button>
+                <button type="submit" form="child-edit-form" class="btn btn-primary">저장</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Reset Data Modal -->
     <div class="modal-overlay" id="reset-modal">
         <div class="modal">

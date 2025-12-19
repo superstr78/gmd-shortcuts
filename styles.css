@@ -454,11 +454,63 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     border-radius: 8px;
     text-decoration: none;
     transition: all 0.15s ease;
+    position: relative;
 }
 
 .child-link:hover {
     background-color: var(--bg-secondary);
     border-color: var(--accent-blue);
+}
+
+/* Child Edit Button */
+.child-edit-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    z-index: 10;
+}
+
+.child-edit-btn:hover {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+}
+
+/* Child Add Button */
+.child-add-btn {
+    border: 1px dashed var(--border-color);
+    background-color: transparent;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.child-add-btn:hover {
+    border-color: var(--accent-blue);
+    background-color: var(--bg-secondary);
+}
+
+.child-add-btn .child-icon {
+    background-color: transparent;
+}
+
+.child-add-btn .child-name {
+    color: var(--text-muted);
+}
+
+.child-add-btn:hover .child-name {
+    color: var(--accent-blue);
 }
 
 .child-icon {

@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initChangelogModal();
     initEditMode();
     initEditModal();
+    initChildEditModal();
     initResetModal();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
@@ -374,15 +375,23 @@ function renderShortcuts() {
                 cardEl.className = shortcut.important ? 'shortcut-card important has-children' : 'shortcut-card has-children';
                 cardEl.dataset.parentUrl = shortcut.url;
 
-                const childrenHtml = shortcut.children.map(child =>
-                    `<a href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer" class="child-link" data-tooltip-name="${child.name}" data-tooltip-desc="${child.description || ''}">
+                // 자식 바로가기 HTML 생성
+                const childrenHtml = shortcut.children.map((child, childIndex) => {
+                    const childEditBtn = isEditMode ? `<button class="child-edit-btn" data-child-index="${childIndex}">✏️</button>` : '';
+                    const tagName = isEditMode ? 'div' : 'a';
+                    const linkAttrs = isEditMode ? '' : `href="${child.url}" target="${getLinkTarget()}" rel="noopener noreferrer"`;
+                    return `<${tagName} ${linkAttrs} class="child-link" data-tooltip-name="${child.name}" data-tooltip-desc="${child.description || ''}">
+                        ${childEditBtn}
                         <div class="child-icon">${child.icon || '📄'}</div>
                         <div class="child-info">
                             <div class="child-name">${child.name}${getServiceBadge(child.url)}</div>
                             ${child.description ? `<div class="child-desc">${child.description}</div>` : ''}
                         </div>
-                    </a>`
-                ).join('');
+                    </${tagName}>`;
+                }).join('');
+
+                // 자식 추가 버튼 HTML
+                const addChildBtnHtml = isEditMode ? `<button class="child-link child-add-btn"><div class="child-icon">➕</div><div class="child-info"><div class="child-name">추가</div></div></button>` : '';
 
                 // 편집 버튼 HTML
                 const editBtnHtml = isEditMode ? `<button class="edit-btn" data-category="${category}" data-name="${shortcut.name}">✏️</button>` : '';
@@ -400,10 +409,11 @@ function renderShortcuts() {
                     </div>
                     <div class="shortcut-children">
                         ${childrenHtml}
+                        ${addChildBtnHtml}
                     </div>
                 `;
 
-                // 편집 버튼 이벤트
+                // 편집 버튼 이벤트 (부모)
                 const editBtn = cardEl.querySelector('.edit-btn');
                 if (editBtn) {
                     editBtn.addEventListener('click', function(e) {
@@ -412,8 +422,26 @@ function renderShortcuts() {
                     });
                 }
 
+                // 자식 편집 버튼 이벤트
+                cardEl.querySelectorAll('.child-edit-btn').forEach((btn, index) => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        openChildEditModal(category, shortcut.name, shortcut.children[index], index);
+                    });
+                });
+
+                // 자식 추가 버튼 이벤트
+                const addChildBtn = cardEl.querySelector('.child-add-btn');
+                if (addChildBtn) {
+                    addChildBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openChildEditModal(category, shortcut.name, null, -1);
+                    });
+                }
+
                 cardEl.addEventListener('click', function(e) {
-                    if (!e.target.closest('.child-link') && !e.target.closest('.edit-btn')) {
+                    if (!e.target.closest('.child-link') && !e.target.closest('.edit-btn') && !e.target.closest('.child-edit-btn') && !e.target.closest('.child-add-btn')) {
                         if (isEditMode) return; // 편집 모드에서는 링크 이동 안함
                         const target = getLinkTarget();
                         if (target === '_blank') {
@@ -567,15 +595,42 @@ function getMergedShortcuts(category) {
     const modified = customData.modified || {};
     const hidden = customData.hidden || [];
     const added = customData.added || [];
+    const childModified = customData.childModified || {};
 
     // 기본 데이터에서 숨겨진 항목 제외하고 수정된 항목 적용
     const mergedBase = baseData
         .filter(item => !hidden.includes(item.name))
         .map(item => {
+            let mergedItem = { ...item };
+
+            // 부모 수정 사항 적용
             if (modified[item.name]) {
-                return { ...item, ...modified[item.name] };
+                mergedItem = { ...mergedItem, ...modified[item.name] };
             }
-            return item;
+
+            // 자식 수정 사항 적용
+            if (item.children && childModified[item.name]) {
+                const childMods = childModified[item.name];
+                const childHidden = childMods.hidden || [];
+                const childModifiedData = childMods.modified || {};
+                const childAdded = childMods.added || [];
+
+                // 기본 자식에서 숨겨진 것 제외, 수정된 것 적용
+                const mergedChildren = item.children
+                    .map((child, index) => {
+                        if (childHidden.includes(index)) return null;
+                        if (childModifiedData[index]) {
+                            return { ...child, ...childModifiedData[index] };
+                        }
+                        return child;
+                    })
+                    .filter(child => child !== null);
+
+                // 추가된 자식 병합
+                mergedItem.children = [...mergedChildren, ...childAdded];
+            }
+
+            return mergedItem;
         });
 
     // 추가된 항목 병합
@@ -798,4 +853,163 @@ function initResetModal() {
 function openResetModal() {
     const modal = document.getElementById('reset-modal');
     if (modal) modal.classList.add('visible');
+}
+
+// ==================== 자식 편집 모달 ====================
+
+function initChildEditModal() {
+    const modal = document.getElementById('child-edit-modal');
+    const closeBtn = document.getElementById('close-child-edit');
+    const cancelBtn = document.getElementById('cancel-child-edit');
+    const deleteBtn = document.getElementById('delete-child-shortcut');
+    const form = document.getElementById('child-edit-form');
+
+    if (!modal) return;
+
+    const closeModal = () => modal.classList.remove('visible');
+
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // 삭제 버튼
+    deleteBtn.addEventListener('click', function() {
+        const category = document.getElementById('child-edit-category').value;
+        const parentName = document.getElementById('child-edit-parent-name').value;
+        const childIndex = parseInt(document.getElementById('child-edit-index').value);
+        const isNew = document.getElementById('child-edit-is-new').value === 'true';
+
+        if (isNew) {
+            closeModal();
+            return;
+        }
+
+        if (confirm('이 자식 바로가기를 삭제하시겠습니까?')) {
+            deleteChildShortcut(category, parentName, childIndex);
+            closeModal();
+            rerenderAll();
+        }
+    });
+
+    // 폼 제출
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const category = document.getElementById('child-edit-category').value;
+        const parentName = document.getElementById('child-edit-parent-name').value;
+        const childIndex = parseInt(document.getElementById('child-edit-index').value);
+        const isNew = document.getElementById('child-edit-is-new').value === 'true';
+
+        const newData = {
+            name: document.getElementById('child-edit-name').value.trim(),
+            url: document.getElementById('child-edit-url').value.trim(),
+            icon: document.getElementById('child-edit-icon').value.trim() || '📄',
+            description: document.getElementById('child-edit-description').value.trim()
+        };
+
+        if (isNew) {
+            addChildShortcut(category, parentName, newData);
+        } else {
+            modifyChildShortcut(category, parentName, childIndex, newData);
+        }
+
+        closeModal();
+        rerenderAll();
+    });
+}
+
+// 자식 편집 모달 열기
+function openChildEditModal(category, parentName, child = null, childIndex = -1) {
+    const modal = document.getElementById('child-edit-modal');
+    const title = document.getElementById('child-edit-modal-title');
+    const deleteBtn = document.getElementById('delete-child-shortcut');
+
+    const isNew = !child;
+
+    document.getElementById('child-edit-category').value = category;
+    document.getElementById('child-edit-parent-name').value = parentName;
+    document.getElementById('child-edit-index').value = childIndex;
+    document.getElementById('child-edit-is-new').value = isNew ? 'true' : 'false';
+
+    document.getElementById('child-edit-name').value = child ? child.name : '';
+    document.getElementById('child-edit-url').value = child ? child.url : '';
+    document.getElementById('child-edit-icon').value = child ? (child.icon || '') : '';
+    document.getElementById('child-edit-description').value = child ? (child.description || '') : '';
+
+    title.textContent = isNew ? '➕ 자식 바로가기 추가' : '✏️ 자식 바로가기 편집';
+    deleteBtn.style.display = isNew ? 'none' : 'block';
+
+    modal.classList.add('visible');
+}
+
+// ==================== 자식 바로가기 데이터 관리 ====================
+
+// 자식 바로가기 수정
+function modifyChildShortcut(category, parentName, childIndex, newData) {
+    const customData = getCustomShortcuts();
+    if (!customData[category]) {
+        customData[category] = { modified: {}, hidden: [], added: [], childModified: {} };
+    }
+    if (!customData[category].childModified) {
+        customData[category].childModified = {};
+    }
+    if (!customData[category].childModified[parentName]) {
+        customData[category].childModified[parentName] = { modified: {}, hidden: [], added: [] };
+    }
+
+    customData[category].childModified[parentName].modified[childIndex] = newData;
+    saveCustomShortcuts(customData);
+}
+
+// 자식 바로가기 추가
+function addChildShortcut(category, parentName, childData) {
+    const customData = getCustomShortcuts();
+    if (!customData[category]) {
+        customData[category] = { modified: {}, hidden: [], added: [], childModified: {} };
+    }
+    if (!customData[category].childModified) {
+        customData[category].childModified = {};
+    }
+    if (!customData[category].childModified[parentName]) {
+        customData[category].childModified[parentName] = { modified: {}, hidden: [], added: [] };
+    }
+
+    customData[category].childModified[parentName].added.push(childData);
+    saveCustomShortcuts(customData);
+}
+
+// 자식 바로가기 삭제
+function deleteChildShortcut(category, parentName, childIndex) {
+    const customData = getCustomShortcuts();
+    if (!customData[category]) {
+        customData[category] = { modified: {}, hidden: [], added: [], childModified: {} };
+    }
+    if (!customData[category].childModified) {
+        customData[category].childModified = {};
+    }
+    if (!customData[category].childModified[parentName]) {
+        customData[category].childModified[parentName] = { modified: {}, hidden: [], added: [] };
+    }
+
+    // 추가된 자식인지 확인 (기본 자식 수 이상의 인덱스면 추가된 것)
+    const baseShortcuts = shortcutsData[category] || [];
+    const parentShortcut = baseShortcuts.find(s => s.name === parentName);
+    const baseChildCount = parentShortcut && parentShortcut.children ? parentShortcut.children.length : 0;
+
+    if (childIndex >= baseChildCount) {
+        // 추가된 자식 삭제
+        const addedIndex = childIndex - baseChildCount;
+        customData[category].childModified[parentName].added.splice(addedIndex, 1);
+    } else {
+        // 기본 자식 숨김
+        if (!customData[category].childModified[parentName].hidden.includes(childIndex)) {
+            customData[category].childModified[parentName].hidden.push(childIndex);
+        }
+        // 수정 데이터도 삭제
+        delete customData[category].childModified[parentName].modified[childIndex];
+    }
+
+    saveCustomShortcuts(customData);
 }
