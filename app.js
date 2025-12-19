@@ -393,17 +393,16 @@ function renderShortcuts() {
                 // 자식 추가 버튼 HTML
                 const addChildBtnHtml = isEditMode ? `<button class="child-link child-add-btn"><div class="child-icon">➕</div><div class="child-info"><div class="child-name">추가</div></div></button>` : '';
 
-                // 편집 버튼 HTML
-                const editBtnHtml = isEditMode ? `<button class="edit-btn" data-category="${category}" data-name="${shortcut.name}">✏️</button>` : '';
+                // 부모 편집 버튼 HTML (이름 옆에 인라인으로 배치)
+                const parentEditBtnHtml = isEditMode ? `<button class="parent-edit-btn" data-category="${category}" data-name="${shortcut.name}">✏️</button>` : '';
 
                 cardEl.dataset.tooltipName = shortcut.name;
                 cardEl.dataset.tooltipDesc = shortcut.description || '';
                 cardEl.innerHTML = `
-                    ${editBtnHtml}
                     <div class="shortcut-main">
                         <div class="shortcut-icon">${shortcut.icon}</div>
                         <div class="shortcut-info">
-                            <div class="shortcut-name">${shortcut.name}${getServiceBadge(shortcut.url)}</div>
+                            <div class="shortcut-name">${shortcut.name}${getServiceBadge(shortcut.url)}${parentEditBtnHtml}</div>
                             ${shortcut.description ? `<div class="shortcut-desc">${shortcut.description}</div>` : ''}
                         </div>
                     </div>
@@ -414,9 +413,9 @@ function renderShortcuts() {
                 `;
 
                 // 편집 버튼 이벤트 (부모)
-                const editBtn = cardEl.querySelector('.edit-btn');
-                if (editBtn) {
-                    editBtn.addEventListener('click', function(e) {
+                const parentEditBtn = cardEl.querySelector('.parent-edit-btn');
+                if (parentEditBtn) {
+                    parentEditBtn.addEventListener('click', function(e) {
                         e.stopPropagation();
                         openEditModal(category, shortcut);
                     });
@@ -441,7 +440,7 @@ function renderShortcuts() {
                 }
 
                 cardEl.addEventListener('click', function(e) {
-                    if (!e.target.closest('.child-link') && !e.target.closest('.edit-btn') && !e.target.closest('.child-edit-btn') && !e.target.closest('.child-add-btn')) {
+                    if (!e.target.closest('.child-link') && !e.target.closest('.parent-edit-btn') && !e.target.closest('.child-edit-btn') && !e.target.closest('.child-add-btn')) {
                         if (isEditMode) return; // 편집 모드에서는 링크 이동 안함
                         const target = getLinkTarget();
                         if (target === '_blank') {
