@@ -1042,10 +1042,20 @@ function exportData() {
     const categoryOrder = localStorage.getItem('categoryOrder');
     const collapsedCategories = localStorage.getItem('collapsedCategories');
 
+    // 내보낼 데이터가 있는지 확인
+    const hasCustomShortcuts = Object.keys(customShortcuts).length > 0;
+    const hasCategoryOrder = categoryOrder !== null;
+    const hasCollapsedCategories = collapsedCategories !== null;
+
+    if (!hasCustomShortcuts && !hasCategoryOrder && !hasCollapsedCategories) {
+        alert('내보낼 데이터가 없습니다.\n\n바로가기를 편집하거나 카테고리 순서를 변경한 후 다시 시도하세요.');
+        return;
+    }
+
     const exportObj = {
-        version: '1.7',
+        version: '1.8',
         exportDate: new Date().toISOString(),
-        customShortcuts: customShortcuts,
+        customShortcuts: hasCustomShortcuts ? customShortcuts : null,
         categoryOrder: categoryOrder ? JSON.parse(categoryOrder) : null,
         collapsedCategories: collapsedCategories ? JSON.parse(collapsedCategories) : null
     };
@@ -1076,21 +1086,30 @@ function importData(file) {
         try {
             const importObj = JSON.parse(e.target.result);
 
-            // 유효성 검사
-            if (!importObj.customShortcuts && !importObj.categoryOrder) {
+            // 유효성 검사 - 객체인지, 필요한 필드가 있는지 확인
+            if (typeof importObj !== 'object' || importObj === null) {
                 alert('유효하지 않은 백업 파일입니다.');
+                return;
+            }
+
+            const hasCustomShortcuts = importObj.customShortcuts && typeof importObj.customShortcuts === 'object' && Object.keys(importObj.customShortcuts).length > 0;
+            const hasCategoryOrder = importObj.categoryOrder && Array.isArray(importObj.categoryOrder);
+            const hasCollapsedCategories = importObj.collapsedCategories && Array.isArray(importObj.collapsedCategories);
+
+            if (!hasCustomShortcuts && !hasCategoryOrder && !hasCollapsedCategories) {
+                alert('가져올 데이터가 없습니다.\n\n백업 파일에 유효한 데이터가 포함되어 있는지 확인하세요.');
                 return;
             }
 
             if (confirm('기존 데이터를 덮어쓰시겠습니까?\n\n취소를 선택하면 가져오기를 중단합니다.')) {
                 // 데이터 복원
-                if (importObj.customShortcuts) {
+                if (hasCustomShortcuts) {
                     localStorage.setItem('customShortcuts', JSON.stringify(importObj.customShortcuts));
                 }
-                if (importObj.categoryOrder) {
+                if (hasCategoryOrder) {
                     localStorage.setItem('categoryOrder', JSON.stringify(importObj.categoryOrder));
                 }
-                if (importObj.collapsedCategories) {
+                if (hasCollapsedCategories) {
                     localStorage.setItem('collapsedCategories', JSON.stringify(importObj.collapsedCategories));
                 }
 
