@@ -17,6 +17,11 @@
                         <span class="edit-mode-icon">✏️</span>
                         <span>편집 모드</span>
                     </button>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="search-input" placeholder="바로가기 검색...">
+                        <button class="search-clear" id="search-clear">✕</button>
+                    </div>
                     <div class="settings-toggles">
                         <label class="toggle-switch">
                             <input type="checkbox" id="dark-mode" checked>
@@ -70,7 +75,7 @@
                         <span>변경 내역</span>
                     </button>
                 </div>
-                <div class="sidebar-version">v1.8</div>
+                <div class="sidebar-version">v1.9</div>
             </aside>
         </main>
     </div>
@@ -130,6 +135,14 @@
                         <li><strong>자식 바로가기</strong> - 부모 항목의 자식도 개별 추가/수정/삭제 가능</li>
                         <li><strong>데이터 초기화</strong> - 설정에서 모든 편집 내용 초기화</li>
                         <li><strong>내보내기/가져오기</strong> - 설정에서 데이터 백업 및 복원</li>
+                    </ul>
+                </div>
+                <div class="help-section">
+                    <h3>🔍 검색</h3>
+                    <ul>
+                        <li><strong>실시간 검색</strong> - 검색창에 입력하면 즉시 필터링</li>
+                        <li><strong>검색 대상</strong> - 바로가기 이름, 설명에서 검색</li>
+                        <li><strong>검색 초기화</strong> - X 버튼 또는 ESC 키로 초기화</li>
                     </ul>
                 </div>
                 <div class="help-section">
@@ -273,6 +286,7 @@
             </div>
             <div class="modal-body help-content">
                 <ul class="changelog">
+                    <li><strong>v1.9</strong> - 바로가기 검색 기능 (실시간 필터링)</li>
                     <li><strong>v1.8</strong> - 데이터 내보내기/가져오기 기능 (JSON 백업)</li>
                     <li><strong>v1.7</strong> - 자식 바로가기 편집 기능 (부모 항목의 자식 추가/수정/삭제)</li>
                     <li><strong>v1.6</strong> - 다크/라이트 테마 전환 기능</li>

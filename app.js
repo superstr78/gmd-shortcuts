@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initEditModal();
     initChildEditModal();
     initResetModal();
+    initSearch();
     renderShortcuts();
     renderSidebarSection('사무 업무', 'office-work');
     renderSidebarSection('팀 공간', 'team-spaces');
@@ -15,6 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 편집 모드 상태
 let isEditMode = false;
+
+// 검색 상태
+let searchQuery = '';
 
 // 카테고리별 헤더 색상
 const categoryColors = {
@@ -1053,7 +1057,7 @@ function exportData() {
     }
 
     const exportObj = {
-        version: '1.8',
+        version: '1.9',
         exportDate: new Date().toISOString(),
         customShortcuts: hasCustomShortcuts ? customShortcuts : null,
         categoryOrder: categoryOrder ? JSON.parse(categoryOrder) : null,
@@ -1126,4 +1130,117 @@ function importData(file) {
     };
 
     reader.readAsText(file);
+}
+
+// ==================== 검색 기능 ====================
+
+// 검색 초기화
+function initSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchBox = searchInput?.parentElement;
+    const clearBtn = document.getElementById('search-clear');
+
+    if (!searchInput) return;
+
+    // 실시간 검색
+    searchInput.addEventListener('input', function() {
+        searchQuery = this.value.trim().toLowerCase();
+
+        // 검색창에 값이 있으면 클래스 추가 (X 버튼 표시용)
+        if (searchQuery) {
+            searchBox.classList.add('has-value');
+        } else {
+            searchBox.classList.remove('has-value');
+        }
+
+        filterShortcuts();
+    });
+
+    // 클리어 버튼
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            searchQuery = '';
+            searchBox.classList.remove('has-value');
+            filterShortcuts();
+            searchInput.focus();
+        });
+    }
+
+    // ESC 키로 검색 초기화
+    searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            this.value = '';
+            searchQuery = '';
+            searchBox.classList.remove('has-value');
+            filterShortcuts();
+        }
+    });
+}
+
+// 바로가기 필터링
+function filterShortcuts() {
+    const query = searchQuery;
+
+    // 메인 바로가기 필터링
+    document.querySelectorAll('.shortcuts-grid .shortcut-card').forEach(card => {
+        // 추가 버튼은 검색 시 숨김
+        if (card.classList.contains('add-shortcut-btn')) {
+            card.classList.toggle('search-hidden', query !== '');
+            return;
+        }
+
+        const name = card.dataset.tooltipName?.toLowerCase() || '';
+        const desc = card.dataset.tooltipDesc?.toLowerCase() || '';
+
+        // 자식 바로가기 이름, 설명도 검색
+        let childMatch = false;
+        card.querySelectorAll('.child-link').forEach(child => {
+            const childName = child.dataset.tooltipName?.toLowerCase() || '';
+            const childDesc = child.dataset.tooltipDesc?.toLowerCase() || '';
+            if (childName.includes(query) || childDesc.includes(query)) {
+                childMatch = true;
+                child.classList.add('search-match');
+            } else {
+                child.classList.remove('search-match');
+            }
+        });
+
+        const matches = !query || name.includes(query) || desc.includes(query) || childMatch;
+
+        card.classList.toggle('search-hidden', !matches);
+        if (matches && (name.includes(query) || desc.includes(query))) {
+            card.classList.add('search-match');
+        } else {
+            card.classList.remove('search-match');
+        }
+    });
+
+    // 카테고리 숨김 처리 (모든 바로가기가 숨겨진 경우)
+    document.querySelectorAll('.category').forEach(category => {
+        const visibleCards = category.querySelectorAll('.shortcut-card:not(.search-hidden):not(.add-shortcut-btn)');
+        category.classList.toggle('search-hidden', visibleCards.length === 0 && query !== '');
+    });
+
+    // 사이드바 필터링
+    document.querySelectorAll('.sidebar-card').forEach(card => {
+        // 추가 버튼은 검색 시 숨김
+        if (card.classList.contains('sidebar-add-btn')) {
+            card.classList.toggle('search-hidden', query !== '');
+            return;
+        }
+
+        const name = card.dataset.tooltipName?.toLowerCase() || '';
+        const desc = card.dataset.tooltipDesc?.toLowerCase() || '';
+        const matches = !query || name.includes(query) || desc.includes(query);
+
+        card.classList.toggle('search-hidden', !matches);
+        card.classList.toggle('search-match', matches && query);
+    });
+
+    // 사이드바 패널 숨김 처리
+    document.querySelectorAll('.sidebar-panel').forEach(panel => {
+        const visibleCards = panel.querySelectorAll('.sidebar-card:not(.search-hidden):not(.sidebar-add-btn)');
+        panel.classList.toggle('search-hidden', visibleCards.length === 0 && query !== '');
+    });
 }

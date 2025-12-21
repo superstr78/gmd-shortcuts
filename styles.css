@@ -132,6 +132,85 @@ main {
     font-size: 14px;
 }
 
+/* Search Box */
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    flex: 1;
+    max-width: 300px;
+    transition: border-color 0.15s ease;
+}
+
+.search-box:focus-within {
+    border-color: var(--accent-blue);
+}
+
+.search-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.search-box input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+    min-width: 0;
+}
+
+.search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-clear {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.search-box.has-value .search-clear {
+    opacity: 1;
+}
+
+.search-clear:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Search Highlight */
+.search-hidden {
+    display: none !important;
+}
+
+.search-match .shortcut-name,
+.search-match .child-name,
+.search-match .sidebar-name {
+    color: var(--accent-blue);
+}
+
+/* No Results Message */
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
 .toggle-switch {
     display: flex;
     align-items: center;
