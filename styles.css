@@ -101,36 +101,6 @@ main {
     gap: 20px;
 }
 
-/* Edit Mode Button in Settings Bar */
-.edit-mode-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-secondary);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.edit-mode-btn:hover {
-    background-color: var(--bg-tertiary);
-    border-color: var(--accent-blue);
-    color: var(--text-primary);
-}
-
-.edit-mode-btn.active {
-    background-color: rgba(88, 166, 255, 0.15);
-    border-color: var(--accent-blue);
-    color: var(--accent-blue);
-}
-
-.edit-mode-icon {
-    font-size: 14px;
-}
 
 /* Search Box */
 .search-box {
@@ -802,6 +772,12 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     background-color: var(--bg-tertiary);
     border-color: var(--accent-blue);
     color: var(--text-primary);
+}
+
+.settings-btn.active {
+    background-color: rgba(88, 166, 255, 0.15);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
 }
 
 .settings-icon {
