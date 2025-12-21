@@ -1040,28 +1040,28 @@ function deleteChildShortcut(category, parentName, childIndex) {
 
 // ==================== 내보내기/가져오기 ====================
 
-// 데이터 내보내기
+// 데이터 내보내기 - 전체 바로가기 데이터
 function exportData() {
-    const customShortcuts = getCustomShortcuts();
-    const categoryOrder = localStorage.getItem('categoryOrder');
-    const collapsedCategories = localStorage.getItem('collapsedCategories');
+    const categoryOrder = getCategoryOrder();
+    const collapsedCategories = JSON.parse(localStorage.getItem('collapsedCategories') || '[]');
 
-    // 내보낼 데이터가 있는지 확인
-    const hasCustomShortcuts = Object.keys(customShortcuts).length > 0;
-    const hasCategoryOrder = categoryOrder !== null;
-    const hasCollapsedCategories = collapsedCategories !== null;
+    // 모든 카테고리의 병합된 전체 데이터 수집
+    const fullShortcuts = {};
+    const allCategories = [...new Set([...Object.keys(shortcutsData), ...categoryOrder])];
 
-    if (!hasCustomShortcuts && !hasCategoryOrder && !hasCollapsedCategories) {
-        alert('내보낼 데이터가 없습니다.\n\n바로가기를 편집하거나 카테고리 순서를 변경한 후 다시 시도하세요.');
-        return;
-    }
+    allCategories.forEach(category => {
+        const mergedData = getMergedShortcuts(category);
+        if (mergedData && mergedData.length > 0) {
+            fullShortcuts[category] = mergedData;
+        }
+    });
 
     const exportObj = {
         version: '1.9',
         exportDate: new Date().toISOString(),
-        customShortcuts: hasCustomShortcuts ? customShortcuts : null,
-        categoryOrder: categoryOrder ? JSON.parse(categoryOrder) : null,
-        collapsedCategories: collapsedCategories ? JSON.parse(collapsedCategories) : null
+        fullShortcuts: fullShortcuts,
+        categoryOrder: categoryOrder,
+        collapsedCategories: collapsedCategories
     };
 
     const dataStr = JSON.stringify(exportObj, null, 2);
@@ -1079,10 +1079,10 @@ function exportData() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    alert('데이터를 내보냈습니다: ' + filename);
+    alert('전체 바로가기 데이터를 내보냈습니다: ' + filename);
 }
 
-// 데이터 가져오기
+// 데이터 가져오기 - 전체 데이터에서 변경사항 계산
 function importData(file) {
     const reader = new FileReader();
 
@@ -1090,26 +1090,33 @@ function importData(file) {
         try {
             const importObj = JSON.parse(e.target.result);
 
-            // 유효성 검사 - 객체인지, 필요한 필드가 있는지 확인
+            // 유효성 검사
             if (typeof importObj !== 'object' || importObj === null) {
                 alert('유효하지 않은 백업 파일입니다.');
                 return;
             }
 
-            const hasCustomShortcuts = importObj.customShortcuts && typeof importObj.customShortcuts === 'object' && Object.keys(importObj.customShortcuts).length > 0;
+            // fullShortcuts 또는 구버전 customShortcuts 확인
+            const hasFullShortcuts = importObj.fullShortcuts && typeof importObj.fullShortcuts === 'object';
+            const hasCustomShortcuts = importObj.customShortcuts && typeof importObj.customShortcuts === 'object';
             const hasCategoryOrder = importObj.categoryOrder && Array.isArray(importObj.categoryOrder);
             const hasCollapsedCategories = importObj.collapsedCategories && Array.isArray(importObj.collapsedCategories);
 
-            if (!hasCustomShortcuts && !hasCategoryOrder && !hasCollapsedCategories) {
-                alert('가져올 데이터가 없습니다.\n\n백업 파일에 유효한 데이터가 포함되어 있는지 확인하세요.');
+            if (!hasFullShortcuts && !hasCustomShortcuts) {
+                alert('가져올 바로가기 데이터가 없습니다.\n\n백업 파일에 유효한 데이터가 포함되어 있는지 확인하세요.');
                 return;
             }
 
             if (confirm('기존 데이터를 덮어쓰시겠습니까?\n\n취소를 선택하면 가져오기를 중단합니다.')) {
-                // 데이터 복원
-                if (hasCustomShortcuts) {
+                // fullShortcuts가 있으면 기본 데이터와 비교하여 customShortcuts 계산
+                if (hasFullShortcuts) {
+                    const customShortcuts = calculateCustomShortcuts(importObj.fullShortcuts);
+                    localStorage.setItem('customShortcuts', JSON.stringify(customShortcuts));
+                } else if (hasCustomShortcuts) {
+                    // 구버전 호환: customShortcuts 직접 사용
                     localStorage.setItem('customShortcuts', JSON.stringify(importObj.customShortcuts));
                 }
+
                 if (hasCategoryOrder) {
                     localStorage.setItem('categoryOrder', JSON.stringify(importObj.categoryOrder));
                 }
@@ -1130,6 +1137,108 @@ function importData(file) {
     };
 
     reader.readAsText(file);
+}
+
+// 전체 데이터에서 기본 데이터와 비교하여 customShortcuts 계산
+function calculateCustomShortcuts(fullShortcuts) {
+    const customShortcuts = {};
+
+    for (const category in fullShortcuts) {
+        const importedItems = fullShortcuts[category] || [];
+        const baseItems = shortcutsData[category] || [];
+
+        const modified = {};
+        const hidden = [];
+        const added = [];
+        const childModified = {};
+
+        // 기본 데이터에 있는 항목 처리
+        baseItems.forEach(baseItem => {
+            const importedItem = importedItems.find(item => item.name === baseItem.name);
+
+            if (!importedItem) {
+                // 가져온 데이터에 없으면 숨김 처리
+                hidden.push(baseItem.name);
+            } else {
+                // 변경 사항 확인
+                const changes = {};
+                let hasChanges = false;
+
+                ['url', 'icon', 'description', 'important'].forEach(key => {
+                    if (importedItem[key] !== baseItem[key]) {
+                        changes[key] = importedItem[key];
+                        hasChanges = true;
+                    }
+                });
+
+                if (hasChanges) {
+                    modified[baseItem.name] = { ...changes, name: importedItem.name };
+                }
+
+                // 자식 바로가기 처리
+                if (baseItem.children) {
+                    const importedChildren = importedItem.children || [];
+                    const baseChildren = baseItem.children;
+
+                    const childMods = { modified: {}, hidden: [], added: [] };
+                    let hasChildChanges = false;
+
+                    // 기본 자식 처리
+                    baseChildren.forEach((baseChild, index) => {
+                        const importedChild = importedChildren.find(c => c.name === baseChild.name);
+
+                        if (!importedChild) {
+                            childMods.hidden.push(index);
+                            hasChildChanges = true;
+                        } else {
+                            const childChanges = {};
+                            let hasChildItemChanges = false;
+
+                            ['url', 'icon', 'description'].forEach(key => {
+                                if (importedChild[key] !== baseChild[key]) {
+                                    childChanges[key] = importedChild[key];
+                                    hasChildItemChanges = true;
+                                }
+                            });
+
+                            if (hasChildItemChanges) {
+                                childMods.modified[index] = { ...childChanges, name: importedChild.name };
+                                hasChildChanges = true;
+                            }
+                        }
+                    });
+
+                    // 추가된 자식 (기본 데이터에 없는 것)
+                    importedChildren.forEach(importedChild => {
+                        const existsInBase = baseChildren.some(b => b.name === importedChild.name);
+                        if (!existsInBase) {
+                            childMods.added.push(importedChild);
+                            hasChildChanges = true;
+                        }
+                    });
+
+                    if (hasChildChanges) {
+                        childModified[baseItem.name] = childMods;
+                    }
+                }
+            }
+        });
+
+        // 추가된 항목 (기본 데이터에 없는 것)
+        importedItems.forEach(importedItem => {
+            const existsInBase = baseItems.some(b => b.name === importedItem.name);
+            if (!existsInBase) {
+                added.push(importedItem);
+            }
+        });
+
+        // 변경 사항이 있는 경우에만 저장
+        if (Object.keys(modified).length > 0 || hidden.length > 0 || added.length > 0 || Object.keys(childModified).length > 0) {
+            customShortcuts[category] = { modified, hidden, added, childModified };
+        }
+    }
+
+    return customShortcuts;
 }
 
 // ==================== 검색 기능 ====================
