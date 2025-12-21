@@ -90,6 +90,14 @@
             <div class="modal-body">
                 <p class="modal-desc">버튼을 사용하여 순서를 변경하세요</p>
                 <div class="category-order-list" id="category-order-list"></div>
+                <div class="export-import-section">
+                    <p class="modal-desc">바로가기 데이터 백업</p>
+                    <div class="export-import-buttons">
+                        <button class="btn btn-secondary" id="export-data">📤 내보내기</button>
+                        <button class="btn btn-secondary" id="import-data">📥 가져오기</button>
+                        <input type="file" id="import-file" accept=".json" style="display: none;">
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-danger" id="open-reset-data" style="margin-right: auto;">데이터 초기화</button>
@@ -120,6 +128,7 @@
                         <li><strong>바로가기 삭제</strong> - 편집 모달에서 삭제 버튼 클릭</li>
                         <li><strong>자식 바로가기</strong> - 부모 항목의 자식도 개별 추가/수정/삭제 가능</li>
                         <li><strong>데이터 초기화</strong> - 설정에서 모든 편집 내용 초기화</li>
+                        <li><strong>내보내기/가져오기</strong> - 설정에서 데이터 백업 및 복원</li>
                     </ul>
                 </div>
                 <div class="help-section">
@@ -263,6 +272,7 @@
             </div>
             <div class="modal-body help-content">
                 <ul class="changelog">
+                    <li><strong>v1.8</strong> - 데이터 내보내기/가져오기 기능 (JSON 백업)</li>
                     <li><strong>v1.7</strong> - 자식 바로가기 편집 기능 (부모 항목의 자식 추가/수정/삭제)</li>
                     <li><strong>v1.6</strong> - 다크/라이트 테마 전환 기능</li>
                     <li><strong>v1.5</strong> - 바로가기 편집 기능 (추가/수정/삭제, 로컬 저장)</li>

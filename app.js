@@ -202,6 +202,27 @@ function initSettingsModal() {
         });
     }
 
+    // 내보내기 버튼
+    const exportBtn = document.getElementById('export-data');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportData);
+    }
+
+    // 가져오기 버튼
+    const importBtn = document.getElementById('import-data');
+    const importFile = document.getElementById('import-file');
+    if (importBtn && importFile) {
+        importBtn.addEventListener('click', function() {
+            importFile.click();
+        });
+        importFile.addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                importData(e.target.files[0]);
+                e.target.value = ''; // 같은 파일 다시 선택 가능하도록
+            }
+        });
+    }
+
     // 모달 닫기
     closeBtn.addEventListener('click', function() {
         modal.classList.remove('visible');
@@ -1011,4 +1032,79 @@ function deleteChildShortcut(category, parentName, childIndex) {
     }
 
     saveCustomShortcuts(customData);
+}
+
+// ==================== 내보내기/가져오기 ====================
+
+// 데이터 내보내기
+function exportData() {
+    const customShortcuts = getCustomShortcuts();
+    const categoryOrder = localStorage.getItem('categoryOrder');
+    const collapsedCategories = localStorage.getItem('collapsedCategories');
+
+    const exportObj = {
+        version: '1.7',
+        exportDate: new Date().toISOString(),
+        customShortcuts: customShortcuts,
+        categoryOrder: categoryOrder ? JSON.parse(categoryOrder) : null,
+        collapsedCategories: collapsedCategories ? JSON.parse(collapsedCategories) : null
+    };
+
+    const dataStr = JSON.stringify(exportObj, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const filename = `gmd-shortcuts-backup-${date}.json`;
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert('데이터를 내보냈습니다: ' + filename);
+}
+
+// 데이터 가져오기
+function importData(file) {
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const importObj = JSON.parse(e.target.result);
+
+            // 유효성 검사
+            if (!importObj.customShortcuts && !importObj.categoryOrder) {
+                alert('유효하지 않은 백업 파일입니다.');
+                return;
+            }
+
+            if (confirm('기존 데이터를 덮어쓰시겠습니까?\n\n취소를 선택하면 가져오기를 중단합니다.')) {
+                // 데이터 복원
+                if (importObj.customShortcuts) {
+                    localStorage.setItem('customShortcuts', JSON.stringify(importObj.customShortcuts));
+                }
+                if (importObj.categoryOrder) {
+                    localStorage.setItem('categoryOrder', JSON.stringify(importObj.categoryOrder));
+                }
+                if (importObj.collapsedCategories) {
+                    localStorage.setItem('collapsedCategories', JSON.stringify(importObj.collapsedCategories));
+                }
+
+                alert('데이터를 가져왔습니다. 페이지를 새로고침합니다.');
+                location.reload();
+            }
+        } catch (error) {
+            alert('파일을 읽는 중 오류가 발생했습니다: ' + error.message);
+        }
+    };
+
+    reader.onerror = function() {
+        alert('파일을 읽을 수 없습니다.');
+    };
+
+    reader.readAsText(file);
 }

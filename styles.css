@@ -797,6 +797,18 @@ body.compact-mode .shortcut-card.important:not(.has-children) {
     display: list-item;
 }
 
+/* Export/Import Section */
+.export-import-section {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.export-import-buttons {
+    display: flex;
+    gap: 10px;
+}
+
 /* Modal */
 .modal-overlay {
     position: fixed;
